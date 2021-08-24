@@ -37,7 +37,7 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(Tag, through='TagsRecipe')
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1,), ]
-        )
+    )
 
     def __str__(self):
         return self.name
