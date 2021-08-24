@@ -22,7 +22,7 @@ class Subscription(models.Model):
         blank=True,
         null=True,
         related_name='subscriber'
-        )
+    )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
