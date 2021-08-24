@@ -38,8 +38,7 @@ jobs:
         with:
           username: rigotka
           password: Falter_sidgun_1580
-      - name: Push to Docker Hub
-        context: ../backend/
+      - name: Push to Docker Hub 
         uses: docker/build-push-action@v2 #
         with:
           push: true
