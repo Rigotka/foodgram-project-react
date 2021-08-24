@@ -2,6 +2,7 @@ import django_filters as filters
 
 from .models import Recipe, Tag
 
+
 class RecipeFilter(filters.FilterSet):
     tags = filters.ModelMultipleChoiceFilter(
         field_name='tags__slug',
@@ -12,7 +13,6 @@ class RecipeFilter(filters.FilterSet):
     is_in_shopping_cart = filters.BooleanFilter(
         method='get_is_in_shopping_cart'
     )
-
 
     class Meta:
         model = Recipe
@@ -26,7 +26,6 @@ class RecipeFilter(filters.FilterSet):
 
     def get_is_in_shopping_cart(self, queryset, name, value):
         user = self.request.user
-        print('hsgregewgewgewgefffffffffffffffffffffffffffffffffffffffff')
         if value:
             return Recipe.objects.filter(recipe_shopping_cart__user=user)
         return Recipe.objects.all()

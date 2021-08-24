@@ -1,5 +1,5 @@
-from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.db import models
 
 
 class User(AbstractUser):
@@ -16,14 +16,19 @@ class User(AbstractUser):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE,blank=True,null=True,related_name='subscriber')
-    author = models.ForeignKey(User,on_delete=models.CASCADE)
-
-    
+    user = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        related_name='subscriber'
+        )
+    author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['user', 'author'], name='subscription'),
+            models.UniqueConstraint(fields=['user', 'author'],
+                                    name='subscription'),
         ]
 
     def __str__(self):

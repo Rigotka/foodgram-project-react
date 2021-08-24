@@ -1,16 +1,13 @@
-from rest_framework import status
-from rest_framework.pagination import PageNumberPagination
-from rest_framework.decorators import action
-from djoser.views import UserViewSet
-from .models import User, Subscription
-from .serializers import UserSerializer , SubscriptionSerializer
 from django.shortcuts import get_object_or_404
+from djoser.views import UserViewSet
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
-from django.http import JsonResponse, HttpResponse
 from rest_framework.response import Response
- 
 
-
+from .models import Subscription, User
+from .serializers import SubscriptionSerializer, UserSerializer
 
 
 class CustomUserViewSet(UserViewSet):
@@ -33,10 +30,10 @@ class CustomUserViewSet(UserViewSet):
         if request.method == 'GET':
             if not follow.exists():
                 new_follow = Subscription.objects.create(user=user,
-                                                   author=author)
+                                                         author=author)
                 new_follow.save()
             serializer = SubscriptionSerializer(instance=author,
-                                               context={'request': request})
+                                                context={'request': request})
             return Response(serializer.data)
         elif request.method == 'DELETE':
             follow.delete()
