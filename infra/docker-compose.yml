@@ -4,6 +4,7 @@ volumes:
   static_value:  
   media_value:
   postgres_data:
+  result_build:
 
 services:
   db:
