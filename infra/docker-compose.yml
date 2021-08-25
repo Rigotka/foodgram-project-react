@@ -24,6 +24,7 @@ services:
 
   backend:
     image: rigotka/foodgram:latest
+
     restart: always
     volumes:
       - static_value:/code/static/
@@ -38,12 +39,12 @@ services:
     volumes:
       - static_value:/static/
       - media_value:/media/
-      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
-      - ./frontend/build:/usr/share/nginx/html/
-      - ./docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
-      - ./docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
+      - result_build:/usr/share/nginx/html/
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
+      - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
       depends_on:
         - backend
         - frontend
-
 
