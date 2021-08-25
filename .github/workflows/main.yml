@@ -58,7 +58,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           stack_file_name: docker-compose.yaml
           script: |
-            sudo docker pull Rigotka/foodgram-project-react
+            sudo docker pull rigotka/foodgram
             sudo docker-compose stop
             sudo docker-compose rm backend
             touch .env 
