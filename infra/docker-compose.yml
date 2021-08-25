@@ -17,20 +17,13 @@ services:
 
   frontend:
     image: rigotka/foodgram-frontend:latest
-    #build:
-      # context: ../frontend
-      # dockerfile: Dockerfile
     volumes:
       - result_build:/build
-      #- ../frontend/:/app/result_build/
       depends_on:
         - db
 
   backend:
     image: rigotka/foodgram:latest
-    #build:
-      # context: ../backend
-      # dockerfile: Dockerfile
     restart: always
     volumes:
       - static_value:/code/static/
@@ -53,4 +46,5 @@ services:
       depends_on:
         - backend
         - frontend
+
 
