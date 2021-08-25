@@ -15,16 +15,19 @@ services:
       - ./.env
 
   frontend:
-    build:
-      context: ../frontend
-      dockerfile: Dockerfile
+    image: rigotka/foodgram-frontend:latest
+    #build:
+      # context: ../frontend
+      # dockerfile: Dockerfile
     volumes:
-      - ../frontend/:/app/result_build/
+      - result_build:/build
+      #- ../frontend/:/app/result_build/
 
   backend:
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: rigotka/foodgram:latest
+    #build:
+      # context: ../backend
+      # dockerfile: Dockerfile
     restart: always
     volumes:
       - static_value:/code/static/
