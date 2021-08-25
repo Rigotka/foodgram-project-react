@@ -19,8 +19,8 @@ services:
     image: rigotka/foodgram-frontend:latest
     volumes:
       - result_build:/build
-      depends_on:
-        - db
+    depends_on:
+      - db
 
   backend:
     image: rigotka/foodgram:latest
@@ -44,7 +44,7 @@ services:
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/redoc.html:/usr/share/nginx/html/api/docs/redoc.html
       - ../docs/openapi-schema.yml:/usr/share/nginx/html/api/docs/openapi-schema.yml
-      depends_on:
-        - backend
-        - frontend
+    depends_on:
+      - backend
+      - frontend
 
