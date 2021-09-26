@@ -59,6 +59,7 @@ jobs:
           stack_file_name: docker-compose.yaml
           script: |
             sudo docker pull rigotka/foodgram
+            sudo docker pull rigotka/foodgram-frontend
             sudo docker-compose stop
             sudo docker-compose rm backend
             touch .env 
