@@ -17,7 +17,7 @@ services:
       - ./.env  #
 
   frontend:
-    image: rigotka/foodgram-frontend:v1
+    image: rigotka/foodgram:latest
     volumes:
       - result_build:/build
     depends_on:
