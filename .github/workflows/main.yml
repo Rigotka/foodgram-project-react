@@ -58,7 +58,7 @@ jobs:
           passphrase: ${{ secrets.PASSPHRASE }}
           script: |
             sudo docker pull rigotka/foodgram
-            sudo docker pull rigotka/frontend:latest
+            sudo docker pull rigotka/frontend
             sudo docker-compose stop
             sudo docker-compose rm backend
             touch .env 
