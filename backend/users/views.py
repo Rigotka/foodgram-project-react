@@ -13,7 +13,7 @@ from .serializers import SubscriptionSerializer, UserSerializer
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+   # permission_classes = [IsAuthenticated]
     pagination_class = PageNumberPagination
 
     @action(methods=['get', 'delete'], detail=True,
