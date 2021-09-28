@@ -19,13 +19,12 @@ services:
   frontend:
     image: rigotka/frontend:v1
     volumes:
-      - result_build:/build
+      - ./frontend/:/app/result_build/
     depends_on:
       - db
 
   backend:
     image: rigotka/foodgram:latest
-
     restart: always
     volumes:
       - static_value:/code/static/
