@@ -5,6 +5,9 @@ from .models import Ingredient, IngredientInRecipe, Recipe, Tag, TagsRecipe
 
 class TagAdmin(admin.ModelAdmin):
     list_display = ('pk', 'name', 'slug')
+    class Meta:
+        verbose_name = 'Тэги'
+    
 
 
 class IngredientAdmin(admin.ModelAdmin):
