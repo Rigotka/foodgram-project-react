@@ -75,4 +75,4 @@ jobs:
             sudo docker-compose exec -T backend python manage.py makemigrations users --noinput
             sudo docker-compose exec -T backend python manage.py makemigrations --noinput
             sudo docker-compose exec -T backend python manage.py migrate --noinput
-            
+          
