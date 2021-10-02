@@ -6,7 +6,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
+from rest_framework.pagination import LimitOffsetPagination
 from .filters import RecipeFilter, IngredientFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
@@ -32,6 +32,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
+    pagination_class = LimitOffsetPaginatio
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
