@@ -6,6 +6,7 @@ volumes:
   media_value:
   result_build:
 
+
 services:
   db:
     image: postgres:12.4
@@ -19,6 +20,8 @@ services:
     image: rigotka/frontend:v1
     volumes:
       - ./frontend/:/app/result_build/
+    depends_on:
+      - db
 
   backend:
     image: rigotka/foodgram:latest
@@ -43,3 +46,6 @@ services:
     depends_on:
       - backend
       - frontend
+
+
+
