@@ -1,8 +1,30 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-
+from django.db.models import Value, Exists, OuterRef
 from users.models import User
 
+
+class RecipeQueryset(models.QuerySet):
+    def annotate_user_flags(self, user):
+        if user.is_anonymous:
+            return self.annotate(is_favorited=Value(
+                False, output_field=models.BooleanField()
+                ),
+                is_in_shopping_cart=Value(
+                    False, output_field=models.BooleanField()
+                )
+            )
+        return self.annotate(is_favorited=Exists(
+                Favorite.objects.filter(
+                    user=user, recipe_id=OuterRef('pk')
+                )
+            ),
+            is_in_shopping_cart=Exists(
+                ShoppingCart.objects.filter(
+                    user=user, recipe_id=OuterRef('pk')
+                )
+            )
+        )
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, blank=False,
@@ -38,11 +60,10 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1,), ]
     )
+    objects = models.Manager.from_queryset(RecipeQueryset)()
 
     def __str__(self):
         return self.name
-    class Meta:
-        verbose_name = 'Рецепты'
 
 
 class TagsRecipe(models.Model):
