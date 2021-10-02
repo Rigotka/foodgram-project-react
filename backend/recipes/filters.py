@@ -13,6 +13,7 @@ class IngredientFilter(filters.FilterSet):
 
 class RecipeFilter(filters.FilterSet):
     tags = filters.ModelMultipleChoiceFilter(
+        conjoined=False,
         field_name='tags__slug',
         to_field_name='slug',
         queryset=Tag.objects.all()

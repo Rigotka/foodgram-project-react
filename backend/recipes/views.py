@@ -32,7 +32,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
-    pagination_class = LimitOffsetPaginatio
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
