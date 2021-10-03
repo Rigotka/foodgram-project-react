@@ -60,16 +60,6 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
     )
     amount = serializers.IntegerField()
 
-    def validate_ingredients(self, data):
-        for ingredient in data:
-            ingredient_amount = ingredient.get('amount')
-            if ingredient_amount <= 0:
-                raise serializers.ValidationError(
-                    'Убедитесь, что количества ингредиента больше 0'
-                )
-        return data
-
-
     class Meta:
         model = IngredientInRecipe
         fields = ('id', 'amount')
@@ -90,6 +80,15 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'ingredients', 'name', 'tags',
                   'cooking_time', 'text', 'image', 'author',)
+
+    def validate_ingredients(self, data):
+        for ingredient in data:
+            ingredient_amount = ingredient.get('amount')
+            if int(ingredient_amount) <= 0:
+                raise serializers.ValidationError(
+                    'Убедитесь, что количества ингредиента больше 0'
+                )
+        return data
 
     def validate_cooking_time(self, data):
         if data <= 0:
