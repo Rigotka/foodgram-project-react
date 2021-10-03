@@ -58,7 +58,7 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(Tag, through='TagsRecipe')
     cooking_time = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1,), 'Это значение должно быть целым числом 1 или более.']
+        validators=[MinValueValidator(1,),]
     )
     objects = models.Manager.from_queryset(RecipeQueryset)()
 
