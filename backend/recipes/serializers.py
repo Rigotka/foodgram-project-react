@@ -81,9 +81,8 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'ingredients', 'name', 'tags',
                   'cooking_time', 'text', 'image', 'author',)
 
-    def validate(self, data):
-        ingredients = self.initial_data.get('ingredients')
-        for item in ingredients:
+    def validate_validate(self, data):
+        for item in data:
             if int(item['amount']) < 1:
                 raise serializers.ValidationError(
                     {'ingredients': (
