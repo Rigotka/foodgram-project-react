@@ -60,6 +60,16 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
     )
     amount = serializers.IntegerField()
 
+    def validate_ingredients(self, data):
+        for ingredient in data:
+            ingredient_amount = ingredient.get('amount')
+            if ingredient_amount <= 0:
+                raise serializers.ValidationError(
+                    'Убедитесь, что количества ингредиента больше 0'
+                )
+        return data
+
+
     class Meta:
         model = IngredientInRecipe
         fields = ('id', 'amount')
@@ -80,39 +90,6 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         model = Recipe
         fields = ('id', 'ingredients', 'name', 'tags',
                   'cooking_time', 'text', 'image', 'author',)
-
-    def validate_ingredients(self, value):
-        if len(value) < 1:
-            raise serializers.ValidationError(
-                'Нужно указать хотя бы один ингредиент.'
-            )
-        all_ingredients_id = list()
-        for ingredient in value:
-            ingredient_id = ingredient.get('id')
-            ingredient_amount = ingredient.get('amount')
-            if ingredient_id is None or ingredient_amount is None:
-                raise serializers.ValidationError(
-                    'Для ингредиентов необходимо указать номер (id) и '
-                    'количество (amount).'
-                )
-            try:
-                ingredient_id = float(ingredient_id)
-                ingredient_amount = float(ingredient_amount)
-            except ValueError:
-                raise serializers.ValidationError(
-                    'Номер (id) и количество (amount) должны быть числами.'
-                )
-            if ingredient_id in all_ingredients_id:
-                raise serializers.ValidationError(
-                    'Ингредиенты не должны повторятся.'
-                )
-            else:
-                all_ingredients_id.append(ingredient_id)
-            if ingredient_amount <= 0:
-                raise serializers.ValidationError(
-                    'Количество должно быть больше 0.'
-                )
-        return value
 
     def validate_cooking_time(self, data):
         if data <= 0:
