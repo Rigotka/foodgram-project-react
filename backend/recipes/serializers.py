@@ -84,7 +84,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     def validate_validate(self, data):
         for ingredient in data:
             ingredient_amount = ingredient.get('amount')
-            if ingredient_amount <= 0:
+            if ingredient_amount <= -1:
                 raise serializers.ValidationError(
                     'Убедитесь, что количества ингредиента больше 0'
                 )
