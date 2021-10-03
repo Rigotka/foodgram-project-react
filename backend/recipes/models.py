@@ -86,7 +86,6 @@ class IngredientInRecipe(models.Model):
     amount = models.PositiveSmallIntegerField(
         null=True,
         verbose_name='Количество ингредиента',
-        validators=[MinValueValidator(1,), 'Это значение должно быть целым числом 1 или более.']
     )
 
     def __str__(self):
