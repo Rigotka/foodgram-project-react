@@ -19,9 +19,9 @@ class Subscription(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        blank=True,
+        blank=False,
         null=True,
-        related_name='subscriber'
+        related_name='subscribers'
     )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
@@ -32,4 +32,4 @@ class Subscription(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.user} na {self.author}'
+        return f'{self.user} -> {self.author}'
