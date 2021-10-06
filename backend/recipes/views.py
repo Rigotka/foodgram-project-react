@@ -45,6 +45,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteAndShoppingCartViewSet(APIView):
+    object = Recipe
+
     def get(self, request, recipe_id):
         user = request.user
         data = {
@@ -71,15 +73,13 @@ class FavoriteAndShoppingCartViewSet(APIView):
         )
 
 class FavoriteViewSet(FavoriteAndShoppingCartViewSet):
-    obj = Recipe
-    serializer_class = FavoriteSerializer
     del_obj = Favorite
+    serializer_class = FavoriteSerializer
 
 
 class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
-    obj = Recipe
-    serializer_class = ShoppingCartSerializer
     del_obj = ShoppingCart
+    serializer_class = ShoppingCartSerializer
 
 
 @api_view(['GET'])
