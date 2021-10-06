@@ -70,6 +70,7 @@ class FavoriteAndShoppingCartViewSet(APIView):
         deletion_obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
 class FavoriteViewSet(FavoriteAndShoppingCartViewSet):
     second_obj = Favorite
     serializer_class = FavoriteSerializer
