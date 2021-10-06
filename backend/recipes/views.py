@@ -45,7 +45,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteAndShoppingCartViewSet(APIView):
-    object = Recipe
+    main_obj = Recipe
 
     def get(self, request, recipe_id):
         user = request.user
@@ -65,20 +65,18 @@ class FavoriteAndShoppingCartViewSet(APIView):
     def delete(self, request, recipe_id):
         user = request.user
         deletion_obj = get_object_or_404(
-            self.del_obj, author=user, recipes_id=recipe_id
+            self.second_obj, author=user, recipes_id=recipe_id
         )
         deletion_obj.delete()
-        return Response(
-            'Removed', status=status.HTTP_204_NO_CONTENT
-        )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 class FavoriteViewSet(FavoriteAndShoppingCartViewSet):
-    del_obj = Favorite
+    second_obj = Favorite
     serializer_class = FavoriteSerializer
 
 
 class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
-    del_obj = ShoppingCart
+    second_obj = ShoppingCart
     serializer_class = ShoppingCartSerializer
 
 
