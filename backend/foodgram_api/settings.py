@@ -114,3 +114,4 @@ REST_FRAMEWORK = {
 DJOSER = {
     'SERIALIZERS': {'user': 'users.serializers.UserSerializer'},
 }
+
