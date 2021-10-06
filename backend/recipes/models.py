@@ -58,7 +58,7 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(Tag, through='TagsRecipe')
     cooking_time = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1, ), ]
+        validators=[MinValueValidator(1, ), 'Время приготовления должно быть больше 0']
     )
     objects = models.Manager.from_queryset(RecipeQueryset)()
 
@@ -84,7 +84,7 @@ class IngredientInRecipe(models.Model):
         related_name='recipe_ingredients'
     )
     amount = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1, ), ]
+        validators=[MinValueValidator(1, ), 'Количество ингредиента должно быть больше 0']
     )
 
     def __str__(self):
@@ -123,4 +123,4 @@ class ShoppingCart(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.recipe}'
+        return f'{self.recipe} в корзине у {self.user}'
