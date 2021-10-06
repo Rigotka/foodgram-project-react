@@ -9,7 +9,7 @@ from rest_framework.views import APIView
 from rest_framework.pagination import LimitOffsetPagination
 from .filters import RecipeFilter, IngredientFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
-from .serializers import (CreateRecipeSerializer, FavoriteSerializer,
+from .serializers import (RecordRecipeSerializer, FavoriteSerializer,
                           IngredientSerializer, ShoppingCartSerializer,
                           ShowRecipeSerializer, TagSerializer)
 
@@ -32,11 +32,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
-    
+
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return ShowRecipeSerializer
-        return CreateRecipeSerializer
+        return RecordRecipeSerializer
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
@@ -44,66 +44,42 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return context
 
 
-class FavoriteViewSet(APIView):
-
+class FavoriteAndShoppingCartViewSet(APIView):
     def get(self, request, recipe_id):
         user = request.user
         data = {
-            "user": user.id,
-            "recipe": recipe_id,
+            'author': user.id,
+            'recipes': recipe_id
         }
-        if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists():
-            return Response(
-                {"Ошибка": "Уже в избранном"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        serializer = FavoriteSerializer(
-            data=data,
-            context={"request": request}
+        serializer = self.serializer_class(
+            data=data, context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED)
 
     def delete(self, request, recipe_id):
         user = request.user
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        if not Favorite.objects.filter(user=user, recipe=recipe).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        Favorite.objects.get(user=user, recipe=recipe).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        deletion_obj = get_object_or_404(
+            self.del_obj, author=user, recipes_id=recipe_id
+        )
+        deletion_obj.delete()
+        return Response(
+            'Removed', status=status.HTTP_204_NO_CONTENT
+        )
+
+class FavoriteViewSet(FavoriteAndShoppingCartViewSet):
+    obj = Recipe
+    serializer_class = FavoriteSerializer
+    del_obj = Favorite
 
 
-class ShoppingCartViewSet(APIView):
-
-    def get(self, request, recipe_id):
-        user = request.user
-        data = {
-            "user": user.id,
-            "recipe": recipe_id,
-        }
-        shopping_cart_exist = ShoppingCart.objects.filter(
-            user=user,
-            recipe__id=recipe_id
-        ).exists()
-        if shopping_cart_exist:
-            return Response(
-                {"Ошибка": "Уже есть в корзине"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        context = {'request': request}
-        serializer = ShoppingCartSerializer(data=data, context=context)
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-
-    def delete(self, request, recipe_id):
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-        if not ShoppingCart.objects.filter(user=user, recipe=recipe).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        ShoppingCart.objects.get(user=user, recipe=recipe).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
+class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
+    obj = Recipe
+    serializer_class = ShoppingCartSerializer
+    del_obj = ShoppingCart
 
 
 @api_view(['GET'])
