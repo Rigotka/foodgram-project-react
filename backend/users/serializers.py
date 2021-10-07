@@ -27,8 +27,7 @@ class GetRecipesSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-class SubscriptionSerializer(serializers.ModelSerializer):
-    is_subscribed = serializers.SerializerMethodField('get_is_subscribed')
+class SubscriptionSerializer(UserSerializer):
     recipes = serializers.SerializerMethodField('get_recipe')
     recipes_count = serializers.SerializerMethodField('get_recipes_count')
 
@@ -40,13 +39,6 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     def create(self, author):
         user = self.context.get('request').user
         return Subscription.objects.create(user=user, following=author)
-
-    def get_is_subscribed(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        user = request.user
-        return Subscription.objects.filter(author=obj, user=user).exists()
 
     def get_recipe(self, obj):
         recipes = Recipe.objects.filter(author=obj)
