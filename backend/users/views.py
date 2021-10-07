@@ -50,7 +50,7 @@ class CustomUserViewSet(UserViewSet):
         user = self.request.user
         users = User.objects.filter(subscription__user=user)
         paginator = PageNumberPagination()
-        paginator.page_size = 10
+        paginator.page_size = 3
         result_page = paginator.paginate_queryset(users, request)
         serializer = SubscriptionSerializer(result_page, many=True,
                                             context={'request': request})
