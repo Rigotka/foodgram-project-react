@@ -26,17 +26,23 @@ class CustomUserViewSet(UserViewSet):
                 {"Ошибка": "Уже в избранном"},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        follow = Subscription.objects.filter(user=user, author=author)
         if request.method == 'GET':
-            if not follow.exists():
-                new_follow = Subscription.objects.create(user=user,
-                                                         author=author)
-                new_follow.save()
-            serializer = SubscriptionSerializer(instance=author,
-                                                context={'request': request})
-            return Response(serializer.data)
+            data = {
+                'user': user.id,
+                'author': author.id
+            }
+            serializer = SubscriptionSerializer(data=data, context={'request': request})
+            if not serializer.is_valid():
+                return Response(
+                    serializer.errors,
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
         elif request.method == 'DELETE':
-            follow.delete()
+            obj = get_object_or_404(Subscription, user=user, author=author)
+            obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False)
