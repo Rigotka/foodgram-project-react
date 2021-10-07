@@ -6,6 +6,7 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
+from .paginator import VariablePageSizePaginator
 from .models import Subscription, User
 from .serializers import SubscriptionSerializer, UserSerializer
 
@@ -14,7 +15,7 @@ class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
-    pagination_class = PageNumberPagination
+    pagination_class = VariablePageSizePaginator
 
     @action(methods=['get', 'delete'], detail=True,
             permission_classes=[IsAuthenticated])
