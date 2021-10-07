@@ -90,11 +90,10 @@ def download_shopping_cart(request):
     ).annotate(
         total_amount=Sum('recipe_ingredients__amount')
     )
-    file_data = ""
+    file_data = []
 
     for item in ingredients:
-        line = ' '.join(str(value) for value in item.values())
-        file_data += line + '\n'
+        file_data.append('\n'.join(str(value) for value in item.values()))
 
     response = HttpResponse(file_data, 'Content-Type: text/plain')
     response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'

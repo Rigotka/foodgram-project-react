@@ -38,6 +38,8 @@ class SubscriptionSerializer(UserSerializer):
 
     def create(self, author):
         user = self.context.get('request').user
+        if user == author:
+            raise serializers.ValidationError('Нельзя подписаться на самого себя')
         return Subscription.objects.create(user=user, following=author)
 
     def get_recipe(self, obj):

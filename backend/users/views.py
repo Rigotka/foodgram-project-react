@@ -21,11 +21,7 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id=None):
         user = self.request.user
         author = get_object_or_404(User, id=id)
-        if user == author:
-            return Response(
-                {"Ошибка": "Уже в избранном"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        
         if request.method == 'GET':
             data = {
                 'user': user.id,
