@@ -20,15 +20,15 @@ class Subscription(models.Model):
         User,
         on_delete=models.CASCADE,
         blank=False,
-        null=True,
-        related_name='subscribers'
+        related_name='subscriptions'
     )
     author = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=['user', 'author'],
-                                    name='subscription'),
+        constraints = [models.UniqueConstraint(
+            fields=['user', 'author'],
+            name='subscription'
+        ),
         ]
 
     def __str__(self):

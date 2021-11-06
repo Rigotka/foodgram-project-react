@@ -2,17 +2,18 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
-from rest_framework import pagination
+from rest_framework import pagination, status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
 from users.paginator import VariablePageSizePaginator
-from rest_framework.pagination import LimitOffsetPagination
-from .filters import RecipeFilter, IngredientFilter
+
+from .filters import IngredientFilter, RecipeFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
-from .serializers import (RecordRecipeSerializer, FavoriteSerializer,
-                          IngredientSerializer, ShoppingCartSerializer,
+from .serializers import (FavoriteSerializer, IngredientSerializer,
+                          RecordRecipeSerializer, ShoppingCartSerializer,
                           ShowRecipeSerializer, TagSerializer)
 
 

@@ -1,10 +1,10 @@
 import django_filters as filters
 
-from .models import Recipe, Tag, Ingredient
+from .models import Ingredient, Recipe, Tag
 
 
 class IngredientFilter(filters.FilterSet):
-    name = filters.CharFilter(field_name="name", lookup_expr='in')
+    name = filters.CharFilter(field_name="name", lookup_expr='icontains')
 
     class Meta:
         model = Ingredient

@@ -1,3 +1,4 @@
+from os import execlp
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status
@@ -6,8 +7,8 @@ from rest_framework.pagination import PageNumberPagination
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from .paginator import VariablePageSizePaginator
 from .models import Subscription, User
+from .paginator import VariablePageSizePaginator
 from .serializers import SubscriptionSerializer, UserSerializer
 
 
@@ -37,10 +38,11 @@ class CustomUserViewSet(UserViewSet):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-        elif request.method == 'DELETE':
-            obj = get_object_or_404(Subscription, user=user, author=author)
+        obj = get_object_or_404(Subscription, user=user, author=author)
+        if obj:
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response({"error": "Вы не подписаны на этого пользователя"}, status=status.HTTP_400_BAD_REQUEST)
 
     @action(detail=False)
     def subscriptions(self, request):
