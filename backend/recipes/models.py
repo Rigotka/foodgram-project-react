@@ -10,22 +10,23 @@ class RecipeQueryset(models.QuerySet):
         if user.is_anonymous:
             return self.annotate(is_favorited=Value(
                 False, output_field=models.BooleanField()
-                ),
+            ),
                 is_in_shopping_cart=Value(
                     False, output_field=models.BooleanField()
-                )
+            )
             )
         return self.annotate(is_favorited=Exists(
-                Favorite.objects.filter(
-                    user=user, recipe_id=OuterRef('pk')
-                )
-            ),
+            Favorite.objects.filter(
+                user=user, recipe_id=OuterRef('pk')
+            )
+        ),
             is_in_shopping_cart=Exists(
                 ShoppingCart.objects.filter(
                     user=user, recipe_id=OuterRef('pk')
                 )
-            )
         )
+        )
+
 
 class Tag(models.Model):
     name = models.CharField(max_length=200, blank=False,
