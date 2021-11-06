@@ -97,7 +97,22 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
         return data
     @transaction.atomic
     def create(self, validated_data):
-        return self.performer(validated_data)
+        image = validated_data.pop('image')
+        ingredients = validated_data.pop('ingredients')
+        recipe = Recipe.objects.create(image=image, **validated_data)
+        tags = self.initial_data.get('tags')
+
+        for tag_id in tags:
+            recipe.tags.add(get_object_or_404(Tag, pk=tag_id))
+
+        for ingredient in ingredients:
+            IngredientInRecipe.objects.create(
+                recipe=recipe,
+                ingredient_id=ingredient.get('id'),
+                amount=ingredient.get('amount')
+            )
+
+        return recipe
 
     @transaction.atomic
     def update(self, instance, validated_data):
@@ -124,7 +139,7 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
         instance.save()
 
         return instance
-        
+
         # return self.performer(validated_data, instance)
 
     # def performer(self, validated_data, recipe=None):
