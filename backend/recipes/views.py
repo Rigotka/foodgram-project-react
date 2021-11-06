@@ -32,7 +32,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [DjangoFilterBackend, ]
-    filter_class = RecipeFilterg
+    filter_class = RecipeFilter
     #pagination_class = VariablePageSizePaginator
 
     def get_serializer_class(self):
@@ -100,3 +100,4 @@ def download_shopping_cart(request):
     response = HttpResponse(file_data, 'Content-Type: text/plain')
     response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
     return response
+
