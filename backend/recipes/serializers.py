@@ -66,6 +66,7 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
         model = IngredientInRecipe
         fields = ('id', 'amount')
 
+
 class RecordRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None, use_url=True)
     author = UserSerializer(read_only=True)
@@ -85,7 +86,7 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
     def validate_ingredients(self, value):
         ids = [ingredient['id'] for ingredient in value]
         if Ingredient.objects.filter(id__in=ids).count() < len(value):
-            raise serializers.ValidationError('Такого ингридиента не существует')
+            raise serializers.ValidationError('Такого ингредиента не существует')
         return value
 
     def validate_cooking_time(self, data):
@@ -100,36 +101,60 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        return self.performer(validated_data, instance)
+        instance.tags.clear()
+        tags = self.initial_data.get('tags')
 
-    def performer(self, validated_data, recipe=None):
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        if recipe is None:
-            recipe = self.Meta.model.objects.create(**validated_data)
-        else:
-            IngredientInRecipe.objects.filter(recipe=recipe).delete()
-            old_tags = Tag.objects.filter(recipes=recipe)
-            for tag in old_tags:
-                recipe.tags.remove(tag)
-            for key, value in validated_data.items():
-                setattr(recipe, key, value)
-            recipe.save()
-        for tag in tags:
-            recipe.tags.add(tag['id'])
-            IngredientInRecipe.objects.bulk_create(
-                [
-                    IngredientInRecipe(
-                        recipe=recipe,
-                        ingredient=get_object_or_404(
-                            Ingredient,
-                            id=ingredient['id'],
-                        ),
-                        amount=ingredient['amount'],
-                    ) for ingredient in ingredients
-                ]
+        for tag_id in tags:
+            instance.tags.add(get_object_or_404(Tag, pk=tag_id))
+
+        IngredientInRecipe.objects.filter(recipe=instance).delete()
+        for ingredient in validated_data.get('ingredients'):
+            ingredients_amounts = IngredientInRecipe.objects.create(
+                recipe=instance,
+                ingredient_id=ingredient.get('id'),
+                amount=ingredient.get('amount')
             )
-            return recipe
+            ingredients_amounts.save()
+
+        if validated_data.get('image') is not None:
+            instance.image = validated_data.get('image')
+        instance.name = validated_data.get('name')
+        instance.text = validated_data.get('text')
+        instance.cooking_time = validated_data.get('cooking_time')
+        instance.save()
+
+        return instance
+        
+        # return self.performer(validated_data, instance)
+
+    # def performer(self, validated_data, recipe=None):
+    #     ingredients = validated_data.pop('ingredients')
+    #     tags = validated_data.pop('tags')
+    #     if recipe is None:
+    #         recipe = self.Meta.model.objects.create(**validated_data)
+    #     else:
+    #         IngredientInRecipe.objects.filter(recipe=recipe).delete()
+    #         old_tags = Tag.objects.filter(recipes=recipe)
+    #         for tag in old_tags:
+    #             recipe.tags.remove(tag)
+    #         for key, value in validated_data.items():
+    #             setattr(recipe, key, value)
+    #         recipe.save()
+    #     for tag in tags:
+    #         recipe.tags.add(tag['id'])
+    #         IngredientInRecipe.objects.bulk_create(
+    #             [
+    #                 IngredientInRecipe(
+    #                     recipe=recipe,
+    #                     ingredient=get_object_or_404(
+    #                         Ingredient,
+    #                         id=ingredient['id'],
+    #                     ),
+    #                     amount=ingredient['amount'],
+    #                 ) for ingredient in ingredients
+    #             ]
+    #         )
+    #         return recipe
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
