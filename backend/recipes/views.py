@@ -32,7 +32,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [DjangoFilterBackend, ]
-    filter_class = RecipeFilter
+    filter_class = RecipeFilterg
     #pagination_class = VariablePageSizePaginator
 
     def get_serializer_class(self):
