@@ -3,9 +3,11 @@ from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
+from rest_framework import pagination
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from users.paginator import VariablePageSizePaginator
 from rest_framework.pagination import LimitOffsetPagination
 from .filters import RecipeFilter, IngredientFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
@@ -17,7 +19,6 @@ from .serializers import (RecordRecipeSerializer, FavoriteSerializer,
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
-    pagination_class = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
@@ -25,13 +26,13 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = IngredientSerializer
     filter_backends = [DjangoFilterBackend, ]
     filter_class = IngredientFilter
-    pagination_class = None
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
+    pagination_class = VariablePageSizePaginator
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
