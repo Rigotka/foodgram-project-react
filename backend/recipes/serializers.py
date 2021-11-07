@@ -109,9 +109,7 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
             recipe = self.Meta.model.objects.create(**validated_data)
         else:
             IngredientInRecipe.objects.filter(recipe=recipe).delete()
-            old_tags = TagsRecipe.objects.filter(recipes=recipe)
-            for tag in old_tags:
-                recipe.tags.remove(tag)
+            old_tags = TagsRecipe.objects.filter(recipes=recipe).delete()
             for key, value in validated_data.items():
                 setattr(recipe, key, value)
             recipe.save()
