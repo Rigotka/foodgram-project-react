@@ -66,6 +66,7 @@ class AddIngredientToRecipeSerializer(serializers.ModelSerializer):
         model = IngredientInRecipe
         fields = ('id', 'amount')
 
+
 class RecordRecipeSerializer(serializers.ModelSerializer):
     image = Base64ImageField(max_length=None, use_url=True)
     author = UserSerializer(read_only=True)

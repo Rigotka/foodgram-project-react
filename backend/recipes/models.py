@@ -17,12 +17,12 @@ class RecipeQueryset(models.QuerySet):
             )
         return self.annotate(is_favorited=Exists(
             Favorite.objects.filter(
-                user=user, recipe_id=OuterRef('id')
+                user=user
             )
         ),
             is_in_shopping_cart=Exists(
                 ShoppingCart.objects.filter(
-                    user=user, recipe_id=OuterRef('id')
+                    user=user
                 )
         )
         )
