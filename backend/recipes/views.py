@@ -33,7 +33,6 @@ class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
-   # pagination_class = VariablePageSizePaginator
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -41,7 +40,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return RecordRecipeSerializer
 
     def get_serializer_context(self):
-        context = super().get_serializer_context()
+        context = super().get_serializer_class()
         context.update({'request': self.request})
         return context
 
