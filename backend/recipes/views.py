@@ -19,6 +19,7 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    pagination_class = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
