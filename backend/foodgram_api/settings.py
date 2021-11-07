@@ -111,7 +111,6 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 6,
 
 }
-}
 
 DJOSER = {
     'SERIALIZERS': {'user': 'users.serializers.UserSerializer'},
