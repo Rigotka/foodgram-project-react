@@ -1,15 +1,13 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from .permissions import IsOwnerOrReadOnly
-
-from users.paginator import VariablePageSizePaginator
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from .paginator import PageLimitSetPagination
+from rest_framework.permissions import AllowAny
 
 from .filters import IngredientFilter, RecipeFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
@@ -21,26 +19,36 @@ from .serializers import (FavoriteSerializer, IngredientSerializer,
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
+    permission_classes = [AllowAny]
     pagination_class = None
 
 
 class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = [DjangoFilterBackend, ]
+    permission_classes = [AllowAny]
     filter_class = IngredientFilter
+    search_fields = ['name', ]
+    pagination_class = None
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
+    pagination_class = PageLimitSetPagination
+    filter_class = RecipeFilter
+    permission_classes = [IsOwnerOrReadOnly]
     queryset = Recipe.objects.prefetch_related(
         'ingredients', 'author', 'tags'
     )
-    #permission_classes = [IsOwnerOrReadOnly]
-    filter_backends = [DjangoFilterBackend, ]
-    filter_class = RecipeFilter
 
+    # def get_queryset(self):
+    #     return Recipe.objects.annotate_user_flags(self.request.user)
     def get_queryset(self):
-        return Recipe.objects.annotate_user_flags(self.request.user)
+        user = self.request.user
+        queryset = super().get_queryset()
+        if user.is_anonymous or user is None:
+            return queryset
+        user_queryset = queryset.annotate_user_flags(user)
+        return user_queryset
 
     def get_serializer_class(self):
         if self.request.method in ['GET', ]:
@@ -52,10 +60,13 @@ class RecipesViewSet(viewsets.ModelViewSet):
         context.update({'request': self.request})
         return context
 
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
 
 class FavoriteAndShoppingCartViewSet(APIView):
+    permission_classes = [IsOwnerOrReadOnly]
     main_obj = Recipe
-    #permission_classes = [IsOwnerOrReadOnly]
 
     def get(self, request, recipe_id):
         user = request.user

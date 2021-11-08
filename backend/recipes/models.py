@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Exists, OuterRef, Value, Count
+from django.db.models import Exists, OuterRef, Value
 
 from users.models import User
 
@@ -64,7 +64,7 @@ class Recipe(models.Model):
 
     def __str__(self):
         return self.name
-    
+
     class Meta:
         ordering = ('-pk', )
 

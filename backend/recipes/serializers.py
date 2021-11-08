@@ -1,13 +1,12 @@
 from django.contrib.auth import get_user_model
 from django.db import transaction
-from django.shortcuts import get_object_or_404
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 
 from users.serializers import UserSerializer
 
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
-                     ShoppingCart, Tag, TagsRecipe)
+                     ShoppingCart, Tag)
 
 User = get_user_model()
 
@@ -82,51 +81,55 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
                   'cooking_time', 'text', 'image', 'author',)
 
     def validate_ingredients(self, value):
-        ids = [ingredient['id'] for ingredient in value]
-        if Ingredient.objects.filter(id__in=ids).count() < len(value):
-            raise serializers.ValidationError('Такого ингридиента не существует')
+        ingredients = self.initial_data.get('ingredients')
+        if not ingredients:
+            raise serializers.ValidationError({'ingredients': 'Список ингредиентов пуст'})
+        ingredients = value['ingredients']
+        for ingredient in ingredients:
+            if ingredient['amount'] <= 0:
+                raise serializers.ValidationError(
+                    {'ingredients': 'Rоличество ингридиента должно быть больше 0'})
         return value
 
-    def validate_cooking_time(self, data):
-        if data <= 0:
-            raise serializers.ValidationError(
-                'Введите целое число больше 0 для времени готовки'
-            )
-        return data
+    def validate_cooking_time(self, value):
+        cooking_time = self.initial_data.get('cooking_time')
+        if int(cooking_time) < 1:
+            raise serializers.ValidationError({'cooking_time': 'Время приготовления должно быть больше 0'})
+
     @transaction.atomic
     def create(self, validated_data):
-        return self.performer(validated_data)
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+        author = self.context.get('request').user
+        recipe = Recipe.objects.create(author=author, **validated_data)
+        recipe.tags.set(tags)
+        self.create_ingredients(recipe, ingredients)
+        return recipe
 
     @transaction.atomic
     def update(self, instance, validated_data):
-        return self.performer(validated_data, instance)
-
-    def performer(self, validated_data, recipe=None):
-        ingredients = validated_data.pop('ingredients')
-        tags = validated_data.pop('tags')
-        if recipe is None:
-            recipe = self.Meta.model.objects.create(**validated_data)
-        else:
-            IngredientInRecipe.objects.filter(recipe=recipe).delete()
-            old_tags = TagsRecipe.objects.filter(recipes=recipe).delete()
-            for key, value in validated_data.items():
-                setattr(recipe, key, value)
-            recipe.save()
-        for tag in tags:
-            recipe.tags.add(tag['id'])
-            IngredientInRecipe.objects.bulk_create(
-                [
-                    IngredientInRecipe(
-                        recipe=recipe,
-                        ingredient=get_object_or_404(
-                            Ingredient,
-                            id=ingredient['id'],
-                        ),
-                        amount=ingredient['amount'],
-                    ) for ingredient in ingredients
-                ]
-            )
-            return recipe
+        if 'tags' in self.initial_data:
+            tags = validated_data.pop('tags')
+            instance.tags.set(tags)
+        if 'ingredients' in self.initial_data:
+            ingredients = validated_data.pop('ingredients')
+            instance.ingredients.clear()
+            self.create_ingredients(instance, ingredients)
+        instance.name = validated_data.get(
+            'name',
+            instance.name
+        )
+        instance.text = validated_data.get(
+            'text',
+            instance.text
+        )
+        instance.cooking_time = validated_data.get(
+            'cooking_time',
+            instance.cooking_time
+        )
+        instance.image = validated_data.get('image', instance.image)
+        instance.save()
+        return instance
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
