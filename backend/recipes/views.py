@@ -2,15 +2,17 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import status, viewsets
+from rest_framework import pagination, status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from django.core.cache import cache
+
 
 from users.paginator import VariablePageSizePaginator
 
 from .filters import IngredientFilter, RecipeFilter
-from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag, RecipeQueryset
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecordRecipeSerializer, ShoppingCartSerializer,
                           ShowRecipeSerializer, TagSerializer)
@@ -30,12 +32,16 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
-    queryset = Recipe.objects.all()
+    pagination_class = VariablePageSizePaginator
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
 
+    def get_queryset(self):
+        return Recipe.objects.annotate_user_flags(self.request.user)
+
+
     def get_serializer_class(self):
-        if self.request.method == 'GET':
+        if self.request.method in ['GET', ]:
             return ShowRecipeSerializer
         return RecordRecipeSerializer
 

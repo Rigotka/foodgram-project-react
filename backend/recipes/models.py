@@ -1,6 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
-from django.db.models import Exists, OuterRef, Value
+from django.db.models import Exists, OuterRef, Value, Count
 
 from users.models import User
 
@@ -8,23 +8,21 @@ from users.models import User
 class RecipeQueryset(models.QuerySet):
     def annotate_user_flags(self, user):
         if user.is_anonymous:
-            return self.annotate(is_favorited=Value(
-                False, output_field=models.BooleanField()
-            ),
+            return self.annotate(
+                is_favorited=Value(
+                    False, output_field=models.BooleanField()
+                ),
                 is_in_shopping_cart=Value(
                     False, output_field=models.BooleanField()
-            )
-            )
-        return self.annotate(is_favorited=Exists(
-            Favorite.objects.filter(
-                user=user
-            )
-        ),
-            is_in_shopping_cart=Exists(
-                ShoppingCart.objects.filter(
-                    user=user
                 )
-        )
+            )
+        return self.annotate(
+            is_favorited=Exists(Favorite.objects.filter(
+                user=user, recipe_id=OuterRef('pk')
+            )),
+            is_in_shopping_cart=Exists(ShoppingCart.objects.filter(
+                userr=user, recipe_id=OuterRef('pk')
+            ))
         )
 
 
@@ -62,10 +60,13 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1, 'Время приготовления должно быть больше 0')]
     )
-    objects = models.Manager.from_queryset(RecipeQueryset)()
+    objects = RecipeQueryset.as_manager()
 
     def __str__(self):
         return self.name
+    
+    class Meta:
+        ordering = ('-pk', )
 
 
 class TagsRecipe(models.Model):
@@ -99,6 +100,7 @@ class Favorite(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        default_related_name = 'favorit'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
                                     name='unique_favorite')
@@ -119,6 +121,7 @@ class ShoppingCart(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        default_related_name = 'shoplist'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
                                     name='unique_shopping')
