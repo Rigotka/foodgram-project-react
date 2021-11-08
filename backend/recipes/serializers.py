@@ -96,6 +96,24 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
         if int(cooking_time) < 1:
             raise serializers.ValidationError({'cooking_time': 'Время приготовления должно быть больше 0'})
 
+    def create_ingredients(self, recipe, ingredients):
+        for ingredient in ingredients:
+            ingr_obj = get_object_or_404(
+                Ingredient,
+                id=ingredient['ingredient'].id
+            )
+            amount = ingredient['amount']
+            if IngredientInRecipe.objects.filter(
+                    recipe=recipe,
+                    ingredient=ingr_obj
+            ).exists():
+                amount += F('amount')
+            IngredientInRecipe.objects.update_or_create(
+                defaults={'amount': amount},
+                recipe=recipe,
+                ingredient=ingr_obj,
+            )
+
     @transaction.atomic
     def create(self, validated_data):
         tags = validated_data.pop('tags')
