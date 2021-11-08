@@ -2,17 +2,17 @@ from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import pagination, status, viewsets
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from django.core.cache import cache
-
+from .permissions import IsOwnerOrReadOnly
 
 from users.paginator import VariablePageSizePaginator
+from rest_framework.permissions import AllowAny, IsAuthenticated
 
 from .filters import IngredientFilter, RecipeFilter
-from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag, RecipeQueryset
+from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecordRecipeSerializer, ShoppingCartSerializer,
                           ShowRecipeSerializer, TagSerializer)
@@ -32,13 +32,15 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
-    pagination_class = VariablePageSizePaginator
+    queryset = Recipe.objects.prefetch_related(
+        'ingredients', 'author', 'tags'
+    )
+    #permission_classes = [IsOwnerOrReadOnly]
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
 
     def get_queryset(self):
         return Recipe.objects.annotate_user_flags(self.request.user)
-
 
     def get_serializer_class(self):
         if self.request.method in ['GET', ]:
@@ -53,6 +55,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 class FavoriteAndShoppingCartViewSet(APIView):
     main_obj = Recipe
+    #permission_classes = [IsOwnerOrReadOnly]
 
     def get(self, request, recipe_id):
         user = request.user

@@ -4,8 +4,9 @@ from djoser.views import UserViewSet
 from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 
 from .models import Subscription, User
 from .paginator import VariablePageSizePaginator
@@ -23,7 +24,7 @@ class CustomUserViewSet(UserViewSet):
     def subscribe(self, request, id=None):
         user = self.request.user
         author = get_object_or_404(User, id=id)
-        
+
         if request.method == 'GET':
             data = {
                 'user': user.id,
