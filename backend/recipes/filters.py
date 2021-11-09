@@ -16,8 +16,8 @@ class RecipeFilter(filters.FilterSet):
         field_name='tags__slug',
         conjoined=False
     )
-    is_favorited = filters.BooleanFilter(method='favorite_filter')
-    is_in_shopping_cart = filters.BooleanFilter(method='shop_filter')
+    is_favorited = filters.BooleanFilter(field_name='is_favorited', method='favorite_filter')
+    is_in_shopping_cart = filters.BooleanFilter(field_name='is_in_shopping_cart', method='shop_filter')
 
     def favorite_filter(self, queryset, name, value):
         qs = queryset.filter(is_favorited=value)
