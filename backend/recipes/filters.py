@@ -29,6 +29,6 @@ class RecipeFilter(filters.FilterSet):
 
     class Meta:
         model = Recipe
-        fields = {
+        fields = ({
             "author": ["exact"],
-        }
+        }, 'is_favorited')
