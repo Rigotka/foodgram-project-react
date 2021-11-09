@@ -16,9 +16,9 @@ class RecipeFilter(filters.FilterSet):
         field_name='tags__slug',
         conjoined=False
     )
-    is_favorited = filters.BooleanFilter(field_name='is_favorited', method='get_favorited')
+    is_favorited = filters.BooleanFilter(name='is_favorited', method='get_favorited')
     is_in_shopping_cart = filters.BooleanFilter(
-        field_name='is_in_shopping_cart',
+        name='is_in_shopping_cart',
         method='get_is_in_shopping_cart'
     )
 
