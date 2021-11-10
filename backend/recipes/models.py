@@ -27,6 +27,15 @@ from users.models import User
 #         )
 class RecipeQueryset(models.QuerySet):
     def with_favorites(self, user=None):
+        """Annotates recipes  with 'is_favorited' field."""
+        subquery = Favorite.objects.filter(
+            user=user,
+            recipe=OuterRef("id"),
+        )
+        qs = self.annotate(is_favorited=Exists(subquery))
+        return qs
+
+    def with_favorites(self, user=None):
         subquery = Favorite.objects.filter(
             user=user,
             recipe=OuterRef("id"),
