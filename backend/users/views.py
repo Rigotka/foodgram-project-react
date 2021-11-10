@@ -2,11 +2,14 @@ from os import execlp
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
 from rest_framework import status
+from rest_framework import permissions
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
 from rest_framework.response import Response
 from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly)
+
+from recipes.permissions import IsAuthorOrReadOnly
 
 from .models import Subscription, User
 from .paginator import VariablePageSizePaginator
@@ -16,7 +19,7 @@ from .serializers import SubscriptionSerializer, UserSerializer
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthorOrReadOnly]
     pagination_class = VariablePageSizePaginator
 
     @action(methods=['get', 'delete'], detail=True,

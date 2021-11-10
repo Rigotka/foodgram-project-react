@@ -5,7 +5,7 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .permissions import IsOwnerOrReadOnly
+from .permissions import IsAuthorOrReadOnly
 from .paginator import PageLimitSetPagination
 from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend 
@@ -34,6 +34,7 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
+    permission_classes = [IsAuthorOrReadOnly]
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
 
@@ -49,7 +50,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class FavoriteAndShoppingCartViewSet(APIView):
-    permission_classes = [IsOwnerOrReadOnly]
+    permission_classes = [IsAuthorOrReadOnly]
     main_obj = Recipe
 
     def get(self, request, recipe_id):
