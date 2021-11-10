@@ -43,8 +43,8 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = UserSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField('get_ingredients')
-    is_favorited = serializers.SerializerMethodField('get_is_favorited')
-    is_in_shopping_cart = serializers.SerializerMethodField('get_is_in_shopping_cart')
+    is_favorited = serializers.BooleanField()
+    is_in_shopping_cart = serializers.BooleanField()
 
     class Meta:
         model = Recipe
@@ -56,19 +56,19 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         qs = IngredientInRecipe.objects.filter(recipe=recipe)
         return IngredientInRecipeSerializer(qs, many=True).data
 
-    def get_is_favorited(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        user = request.user
-        return Favorite.objects.filter(recipe=obj, user=user).exists()
+    # def get_is_favorited(self, obj):
+    #     request = self.context.get('request')
+    #     if request is None or request.user.is_anonymous:
+    #         return False
+    #     user = request.user
+    #     return Favorite.objects.filter(recipe=obj, user=user).exists()
 
-    def get_is_in_shopping_cart(self, obj):
-        request = self.context.get('request')
-        if request is None or request.user.is_anonymous:
-            return False
-        user = request.user
-        return ShoppingCart.objects.filter(recipe=obj, user=user).exists()
+    # def get_is_in_shopping_cart(self, obj):
+    #     request = self.context.get('request')
+    #     if request is None or request.user.is_anonymous:
+    #         return False
+    #     user = request.user
+    #     return ShoppingCart.objects.filter(recipe=obj, user=user).exists()
 
 
 class AddIngredientToRecipeSerializer(serializers.ModelSerializer):

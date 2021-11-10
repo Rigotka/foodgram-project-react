@@ -38,6 +38,17 @@ class RecipesViewSet(viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
 
+    def get_queryset(self):
+        queryset = Recipe.objects
+        user = self.request.user
+        queryset = queryset.annotate_user_flags(user)
+        if self.request.query_params.get('is_favorited'):
+            queryset = queryset.filter(is_favorited=True)
+        if self.request.query_params.get('is_in_shopping_cart'):
+            queryset = queryset.filter(is_in_shopping_cart=True)
+
+        return queryset
+
     def get_serializer_class(self):
         if self.request.method == 'GET':
             return ShowRecipeSerializer

@@ -6,7 +6,15 @@ from users.models import User
 
 
 class RecipeQueryset(models.QuerySet):
+    
     def annotate_user_flags(self, user):
+        if user.is_anonymous:
+            return self.annotate(is_favorited=Value(
+                False, output_field=models.BooleanField()
+            ),
+                is_in_shopping_cart=Value(
+                    False, output_field=models.BooleanField()
+            ))
         return self.annotate(
             is_favorited=Exists(
                 Favorite.objects.filter(
@@ -56,6 +64,7 @@ class Recipe(models.Model):
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(1, 'Время приготовления должно быть больше 0')]
     )
+    objects = RecipeQueryset.as_manager()
 
     def __str__(self):
         return self.name
