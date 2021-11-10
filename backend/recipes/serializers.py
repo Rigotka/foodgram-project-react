@@ -51,7 +51,6 @@ class ShowRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'tags', 'author', 'ingredients',
                   'is_favorited', 'is_in_shopping_cart',
                   'name', 'image', 'text', 'cooking_time')
-        extra_fields = ('is_favorited', 'is_in_shopping_cart')
 
     def get_ingredients(self, recipe):
         qs = IngredientInRecipe.objects.filter(recipe=recipe)

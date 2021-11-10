@@ -49,8 +49,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
         queryset = super().get_queryset()
         queryset = (
-            queryset.author_with_subscriptions(user=user)
-            .with_favorites(user=user)
+            queryset.with_favorites(user=user)
             .with_shopping_cart(user=user)
         )
         return queryset
