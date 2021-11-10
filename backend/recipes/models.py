@@ -21,6 +21,7 @@ class RecipeQueryset(models.QuerySet):
         )
 
 
+
 class Tag(models.Model):
     name = models.CharField(max_length=200, blank=False,
                             null=True, unique=True)
