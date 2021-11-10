@@ -15,7 +15,7 @@ class RecipeQueryset(models.QuerySet):
             ),
             is_in_shopping_cart=Exists(
                 ShoppingCart.objects.filter(
-                    userr=user, recipe_id=OuterRef('pk')
+                    user=user, recipe_id=OuterRef('pk')
                 )
             )
         )
