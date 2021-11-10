@@ -16,23 +16,23 @@ class RecipeFilter(filters.FilterSet):
         field_name='tags__slug',
         conjoined=False
     )
-    is_favorited = filters.BooleanFilter(method='favorite_filter')
+    is_favorited = filters.BooleanFilter(method='get_is_favorited')
     is_in_shopping_cart = filters.BooleanFilter(
-        method='shop_filter'
+        method='get_is_in_shopping_cart'
     )
 
-    def favorite_filter(self, queryset, name, value):
-        qs = queryset.filter(is_favorited=value)
-        return qs
+    def get_is_favorited(self, queryset, name, value):
+        if value:
+            return queryset.filter(favorite__user=self.request.user)
+        return queryset
 
-    def shop_filter(self, queryset, name, value):
-        qs = queryset.filter(is_in_shopping_cart=value)
-        return qs
+    def get_is_in_shopping_cart(self, queryset, name, value):
+        if value:
+            return queryset.filter(shopping_cart__user=self.request.user)
+        return queryset
 
     class Meta:
         model = Recipe
         fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
-        # fields = {
-        #     "author": ["exact"],
-        # }
+
 

@@ -7,22 +7,17 @@ from users.models import User
 
 class RecipeQueryset(models.QuerySet):
     def annotate_user_flags(self, user):
-        if user.is_anonymous:
-            return self.annotate(
-                is_favorited=Value(
-                    False, output_field=models.BooleanField()
-                ),
-                is_in_shopping_cart=Value(
-                    False, output_field=models.BooleanField()
+        return self.annotate(
+            is_favorited=Exists(
+                Favorite.objects.filter(
+                    user=user, recipe_id=OuterRef('pk')
+                )
+            ),
+            is_in_shopping_cart=Exists(
+                ShoppingCart.objects.filter(
+                    userr=user, recipe_id=OuterRef('pk')
                 )
             )
-        return self.annotate(
-            is_favorited=Exists(Favorite.objects.filter(
-                user=user, recipe_id=OuterRef('pk')
-            )),
-            is_in_shopping_cart=Exists(ShoppingCart.objects.filter(
-                userr=user, recipe_id=OuterRef('pk')
-            ))
         )
 
 
