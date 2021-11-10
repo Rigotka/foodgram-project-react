@@ -1,29 +1,46 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Exists, OuterRef, Value
+from django.db.models.query import Prefetch
 
 from users.models import User
 
 
+# class RecipeQueryset(models.QuerySet):
+#     def annotate_user_flags(self, user):
+#         if user.is_anonymous:
+#             return self.annotate(
+#                 is_favorited=Value(
+#                     False, output_field=models.BooleanField()
+#                 ),
+#                 is_in_shopping_cart=Value(
+#                     False, output_field=models.BooleanField()
+#                 )
+#             )
+#         return self.annotate(
+#             is_favorited=Exists(Favorite.objects.filter(
+#                 user=user, recipe_id=OuterRef('pk')
+#             )),
+#             is_in_shopping_cart=Exists(ShoppingCart.objects.filter(
+#                 userr=user, recipe_id=OuterRef('pk')
+#             ))
+#         )
 class RecipeQueryset(models.QuerySet):
-    def annotate_user_flags(self, user):
-        if user.is_anonymous:
-            return self.annotate(
-                is_favorited=Value(
-                    False, output_field=models.BooleanField()
-                ),
-                is_in_shopping_cart=Value(
-                    False, output_field=models.BooleanField()
-                )
-            )
-        return self.annotate(
-            is_favorited=Exists(Favorite.objects.filter(
-                user=user, recipe_id=OuterRef('pk')
-            )),
-            is_in_shopping_cart=Exists(ShoppingCart.objects.filter(
-                userr=user, recipe_id=OuterRef('pk')
-            ))
+    def with_favorites(self, user=None):
+        subquery = Favorite.objects.filter(
+            user=user,
+            recipe=OuterRef("id"),
         )
+        qs = self.annotate(is_favorited=Exists(subquery))
+        return qs
+
+    def with_shopping_cart(self, user=None):
+        subquery = ShoppingCart.objects.filter(
+            user=user,
+            recipe=OuterRef("id"),
+        )
+        qs = self.annotate(is_in_shopping_cart=Exists(subquery))
+        return qs
 
 
 class Tag(models.Model):
