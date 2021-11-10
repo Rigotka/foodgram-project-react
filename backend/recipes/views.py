@@ -38,8 +38,8 @@ class RecipesViewSet(viewsets.ModelViewSet):
     permission_classes = [IsOwnerOrReadOnly]
     queryset = (
         Recipe.ext_objects.prefetch_related("tags")
-        .prefetch_related("recipeingredients__ingredient")
-        .prefetch_related("recipeingredients__ingredient__measurement_unit")
+        .prefetch_related("ingredientinrecipe__ingredient")
+        .prefetch_related("ingredientinrecipe__ingredient__measurement_unit")
     )
 
     def get_queryset(self):
