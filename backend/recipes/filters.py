@@ -34,3 +34,4 @@ class RecipeFilter(filters.FilterSet):
         if value:
             return queryset.filter(shopping_cart__user=self.request.user)
         return queryset
+
