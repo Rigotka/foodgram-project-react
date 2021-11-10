@@ -30,9 +30,9 @@ class RecipeFilter(filters.FilterSet):
         return qs
 
     class Meta:
-        # model = Recipe
-        # fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
-        fields = {
-            "author": ["exact"],
-        }
+        model = Recipe
+        fields = ['author', 'tags', 'is_favorited', 'is_in_shopping_cart']
+        # fields = {
+        #     "author": ["exact"],
+        # }
 

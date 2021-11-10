@@ -36,32 +36,19 @@ class RecipesViewSet(viewsets.ModelViewSet):
     pagination_class = PageLimitSetPagination
     filter_class = RecipeFilter
     permission_classes = [IsOwnerOrReadOnly]
-    queryset = (
-        Recipe.ext_objects.prefetch_related("tags")
-        .prefetch_related("ingredientinrecipe__ingredient")
-        .prefetch_related("ingredientinrecipe__ingredient__measurement_unit")
+    queryset = Recipe.objects.prefetch_related(
+        'ingredients', 'author', 'tags'
     )
 
-    def get_queryset(self):
-        user = self.request.user
-        if not user.is_authenticated:
-            user = None
-
-        queryset = super().get_queryset()
-        queryset = (
-            queryset.with_favorites(user=user)
-            .with_shopping_cart(user=user)
-        )
-        return queryset
     # def get_queryset(self):
     #     return Recipe.objects.annotate_user_flags(self.request.user)
-    # def get_queryset(self):
-    #     user = self.request.user
-    #     queryset = super().get_queryset()
-    #     if user.is_anonymous or user is None:
-    #         return queryset
-    #     user_queryset = queryset.annotate_user_flags(user)
-    #     return user_queryset
+    def get_queryset(self):
+        user = self.request.user
+        queryset = super().get_queryset()
+        if user.is_anonymous or user is None:
+            return queryset
+        user_queryset = queryset.annotate_user_flags(user)
+        return user_queryset
 
     def get_serializer_class(self):
         if self.request.method in ['GET', ]:
