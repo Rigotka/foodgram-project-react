@@ -27,7 +27,7 @@ class RecipeAdmin(admin.ModelAdmin):
     inlines = [TabularInlineIngredient, TabularInlineTag]
     
     def favorited(self, obj):
-        favorited_count = Favorites.objects.filter(recipe=obj).count()
+        favorited_count = Favorite.objects.filter(recipe=obj).count()
         return favorited_count
 
     favorited.short_description = 'В избранном'
