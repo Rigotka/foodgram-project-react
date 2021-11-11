@@ -14,7 +14,7 @@ from recipes.permissions import IsAuthorOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 from .models import Subscription, User
 from .paginator import VariablePageSizePaginator
-from .serializers import SubscriptionSerializer, UserSerializer, ShowSubscriptionSerializer
+from .serializers import SubscriptionSerializer, UserSerializer,
 
 
 class CustomUserViewSet(UserViewSet):
