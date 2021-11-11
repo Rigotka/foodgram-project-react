@@ -28,29 +28,6 @@ class GetRecipesSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'image', 'cooking_time')
 
 
-# class SubscriptionSerializer(UserSerializer):
-#     recipes = serializers.SerializerMethodField('get_recipe')
-#     recipes_count = serializers.SerializerMethodField('get_recipes_count')
-
-#     class Meta:
-#         model = User
-#         fields = ('email', 'id', 'username', 'first_name',
-#                   'last_name', 'is_subscribed', 'recipes', 'recipes_count')
-
-#     def create(self, author):
-#         user = self.context.get('request').user
-#         if user == author:
-#             raise serializers.ValidationError('Нельзя подписаться на самого себя')
-#         return Subscription.objects.create(user=user, following=author)
-
-#     def get_recipe(self, obj):
-#         recipes = Recipe.objects.filter(author=obj)
-#         return GetRecipesSerializer(recipes, many=True).data
-
-#     def get_recipes_count(self, obj):
-#         return obj.recipes.count()
-
-
 class ShowSubscriptionSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes = serializers.SerializerMethodField()
@@ -62,6 +39,7 @@ class ShowSubscriptionSerializer(serializers.ModelSerializer):
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count'
         )
+        read_only_fields = fields
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
@@ -100,9 +78,9 @@ class SubscriptionSerializer(serializers.ModelSerializer):
                     'Нельзя подписываться дважды')
         return data
 
-    # def to_representation(self, instance):
-    #     request = self.context.get('request')
-    #     context = {'request': request}
-    #     return ShowFollowSerializer(
-    #         instance.author,
-    #         context=context).data
+    def to_representation(self, instance):
+        request = self.context.get('request')
+        context = {'request': request}
+        return ShowSubscriptionSerializer(
+            instance.author,
+            context=context).data

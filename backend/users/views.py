@@ -64,4 +64,4 @@ class ListSubscribeViewSet(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return User.objects.filter(following__user=user)
+        return User.objects.filter(author__user=user)
