@@ -53,7 +53,6 @@ class SubscribeViewSet(APIView):
 
 
 class ListSubscribeViewSet(generics.ListAPIView):
-    queryset = User.objects.all()
     permission_classes = [IsAuthenticated, ]
     serializer_class = ShowSubscriptionSerializer
 
