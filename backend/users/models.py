@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import BooleanField, Count, Value
 
 
 class User(AbstractUser):
@@ -20,7 +21,7 @@ class Subscription(models.Model):
         User,
         on_delete=models.CASCADE,
         blank=False,
-        related_name='subscriptions'
+        related_name='follower'
     )
     author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='following')
 

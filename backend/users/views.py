@@ -20,7 +20,8 @@ from .serializers import SubscriptionSerializer, UserSerializer, ShowSubscriptio
 class CustomUserViewSet(UserViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthorOrReadOnly]
+    permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
 
 
 class SubscribeViewSet(APIView):
