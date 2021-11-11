@@ -25,6 +25,12 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('author', 'name', 'tags')
     exclude = ('ingredients',)
     inlines = [TabularInlineIngredient, TabularInlineTag]
+    
+    def favorited(self, obj):
+        favorited_count = Favorites.objects.filter(recipe=obj).count()
+        return favorited_count
+
+    favorited.short_description = 'В избранном'
 
 
 admin.site.register(Tag, TagAdmin)
