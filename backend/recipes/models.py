@@ -158,8 +158,8 @@ class Favorite(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="recipe_favorite"б
-        verbose_name='Избранный рецепт',
+        related_name="recipe_favorite",
+        verbose_name='Избранный рецепт'
     )
     date = models.DateTimeField(auto_now_add=True)
 
