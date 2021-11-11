@@ -50,6 +50,33 @@ class GetRecipesSerializer(serializers.ModelSerializer):
 #     def get_recipes_count(self, obj):
 #         return obj.recipes.count()
 
+
+class ShowSubscriptionSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = serializers.SerializerMethodField()
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = (
+            'email', 'id', 'username', 'first_name', 'last_name',
+            'is_subscribed', 'recipes', 'recipes_count'
+        )
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return obj.follower.filter(user=obj, author=request.user).exists()
+
+    def get_recipe(self, obj):
+        recipes = Recipe.objects.filter(author=obj)
+        return GetRecipesSerializer(recipes, many=True).data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
+
+
 class SubscriptionSerializer(serializers.ModelSerializer):
     queryset = User.objects.all()
     user = serializers.PrimaryKeyRelatedField(queryset=queryset)
