@@ -122,7 +122,8 @@ class FavoriteViewSet(APIView):
 #     serializer_class = FavoriteSerializer
 
 
-# class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
+class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
+    pass
 #     second_obj = ShoppingCart
 #     serializer_class = ShoppingCartSerializer
 
