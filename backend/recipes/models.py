@@ -59,7 +59,7 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(
-        max_length=200,
+        max_length=199,
         blank=False,
         null=True,
         unique=True,
