@@ -53,14 +53,15 @@ class SubscribeViewSet(APIView):
 
 
 class ListSubscribeViewSet(generics.ListAPIView):
+    queryset = User.objects.all()
     permission_classes = [IsAuthenticated, ]
     serializer_class = ShowSubscriptionSerializer
-
-    def get_queryset(self):
-        user = self.request.user
-        return User.objects.filter(author__user=user)
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
         context.update({'request': self.request})
         return context
+
+    def get_queryset(self):
+        user = self.request.user
+        return User.objects.filter(author__user=user)
