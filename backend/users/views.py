@@ -1,20 +1,15 @@
-from os import execlp
 from django.shortcuts import get_object_or_404
 from djoser.views import UserViewSet
-from rest_framework import status, generics
-from rest_framework import permissions
+from rest_framework import status
 from rest_framework.decorators import action
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
-from rest_framework.views import APIView
 
-from recipes.permissions import IsAuthorOrReadOnly
-from .permissions import IsOwnerOrReadOnly
 from .models import Subscription, User
-from .paginator import VariablePageSizePaginator
-from .serializers import SubscriptionSerializer, UserSerializer, ListSubscriptionSerializer
+from .permissions import IsOwnerOrReadOnly
+from .serializers import (ListSubscriptionSerializer, SubscriptionSerializer,
+                          UserSerializer)
 
 
 class CustomUserViewSet(UserViewSet):
@@ -59,4 +54,3 @@ class CustomUserViewSet(UserViewSet):
             context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
-

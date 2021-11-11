@@ -1,14 +1,13 @@
 from django.db.models import Sum
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from .permissions import IsAuthorOrReadOnly
-from .paginator import PageLimitSetPagination
-from rest_framework.permissions import AllowAny
-from django_filters.rest_framework import DjangoFilterBackend 
+
 from .filters import IngredientFilter, RecipeFilter
 from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
 from .serializers import (FavoriteSerializer, IngredientSerializer,
@@ -34,7 +33,6 @@ class IngredientViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
-    #permission_classes = [IsAuthorOrReadOnly]
     filter_backends = [DjangoFilterBackend, ]
     filter_class = RecipeFilter
 
@@ -98,7 +96,6 @@ class FavoriteViewSet(FavoriteAndShoppingCartViewSet):
 class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
     serializer_class = ShoppingCartSerializer
     obj = ShoppingCart
-
 
 
 @api_view(['GET'])

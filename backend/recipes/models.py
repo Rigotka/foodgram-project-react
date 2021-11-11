@@ -1,7 +1,6 @@
 from django.core.validators import MinValueValidator
 from django.db import models
 from django.db.models import Exists, OuterRef, Value
-
 from users.models import User
 
 
@@ -29,30 +28,58 @@ class RecipeQueryset(models.QuerySet):
         )
 
 
-
 class Tag(models.Model):
-    name = models.CharField(max_length=200, blank=False,
-                            null=True, unique=True)
-    color = models.CharField(max_length=200, blank=False,
-                             null=True, unique=True)
-    slug = models.SlugField(max_length=200, blank=False,
-                            null=True, unique=True)
+    name = models.CharField(
+        max_length=200,
+        blank=False,
+        null=True,
+        unique=True
+    )
+    color = models.CharField(
+        max_length=200,
+        blank=False,
+        null=True,
+        unique=True
+    )
+    slug = models.SlugField(
+        max_length=200,
+        blank=False,
+        null=True,
+        unique=True
+    )
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
 
     def __str__(self):
         return self.name
 
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=200, blank=False,
-                            null=True, unique=True)
+    name = models.CharField(
+        max_length=200,
+        blank=False,
+        null=True,
+        unique=True
+    )
     measurement_unit = models.CharField(max_length=50)
+
+    class Meta:
+        ordering = ('name', )
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
         return self.name
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
+    author = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='recipes'
+    )
     name = models.CharField(max_length=200, blank=False)
     image = models.ImageField(upload_to='recipes/images/')
     text = models.TextField()
@@ -60,22 +87,35 @@ class Recipe(models.Model):
         Ingredient,
         through='IngredientInRecipe'
     )
-    tags = models.ManyToManyField(Tag, through='TagsRecipe')
+    tags = models.ManyToManyField(
+        Tag,
+        through='TagsRecipe'
+    )
     cooking_time = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1, 'Время приготовления должно быть больше 0')]
+        validators=[MinValueValidator(
+            1, 'Время приготовления должно быть больше 0')
+        ]
     )
     objects = RecipeQueryset.as_manager()
+
+    class Meta:
+        ordering = ('-pk', )
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
 
     def __str__(self):
         return self.name
 
-    class Meta:
-        ordering = ('-pk', )
-
 
 class TagsRecipe(models.Model):
-    tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    tag = models.ForeignKey(
+        Tag,
+        on_delete=models.CASCADE
+    )
+    recipe = models.ForeignKey(
+        Recipe,
+        on_delete=models.CASCADE
+    )
 
 
 class IngredientInRecipe(models.Model):
@@ -91,8 +131,14 @@ class IngredientInRecipe(models.Model):
         related_name='recipe_ingredients'
     )
     amount = models.PositiveSmallIntegerField(
-        validators=[MinValueValidator(1, 'Количество ингредиента должно быть больше 0')]
+        validators=[MinValueValidator(
+            1, 'Количество ингредиента должно быть больше 0')
+        ]
     )
+
+    class Meta:
+        verbose_name = 'Количество ингредиента'
+        verbose_name_plural = 'Количество ингредиентов'
 
     def __str__(self):
         return f'{self.ingredient} in {self.recipe}'
@@ -112,6 +158,8 @@ class Favorite(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        verbose_name = 'Избранное'
+        verbose_name_plural = 'Избранное'
         default_related_name = 'favorit'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],
@@ -133,6 +181,8 @@ class ShoppingCart(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     class Meta:
+        verbose_name = 'Покупка'
+        verbose_name_plural = 'Покупки'
         default_related_name = 'shoplist'
         constraints = [
             models.UniqueConstraint(fields=['user', 'recipe'],

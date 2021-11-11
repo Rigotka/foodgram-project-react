@@ -4,7 +4,10 @@ from .models import Ingredient, Recipe
 
 
 class IngredientFilter(filters.FilterSet):
-    name = filters.CharFilter(field_name="name", lookup_expr='icontains')
+    name = filters.CharFilter(
+        field_name="name",
+        lookup_expr='icontains'
+    )
 
     class Meta:
         model = Ingredient
@@ -29,10 +32,12 @@ class RecipeFilter(filters.FilterSet):
 
     def get_is_favorited(self, queryset, name, value):
         if value:
-            return queryset.filter(recipe_favorite__user=self.request.user)
+            return queryset.filter(
+                recipe_favorite__user=self.request.user)
         return queryset
 
     def get_is_in_shopping_cart(self, queryset, name, value):
         if value:
-            return queryset.filter(recipe_shopping_cart__user=self.request.user)
+            return queryset.filter(
+                recipe_shopping_cart__user=self.request.user)
         return queryset

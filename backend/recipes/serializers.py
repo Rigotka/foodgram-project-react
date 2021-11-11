@@ -2,10 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import transaction
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from django.shortcuts import get_object_or_404
-
 from users.serializers import UserSerializer
-from django.db.models import F
 
 from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
                      ShoppingCart, Tag)
@@ -127,76 +124,6 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
             }
         ).data
         return data
-
-
-    # def validate_ingredients(self, value):
-    #     ingredients = self.initial_data.get('ingredients')
-    #     if not ingredients:
-    #         raise serializers.ValidationError({'ingredients': 'Список ингредиентов пуст'})
-    #     ingredients = value['ingredients']
-    #     for ingredient in ingredients:
-    #         if ingredient['amount'] <= 0:
-    #             raise serializers.ValidationError(
-    #                 {'ingredients': 'Rоличество ингридиента должно быть больше 0'})
-    #     return value
-
-    # def validate_cooking_time(self, value):
-    #     cooking_time = self.initial_data.get('cooking_time')
-    #     if int(cooking_time) < 1:
-    #         raise serializers.ValidationError({'cooking_time': 'Время приготовления должно быть больше 0'})
-
-    # def create_ingredients(self, recipe, ingredients):
-    #     for ingredient in ingredients:
-    #         ingr_obj = get_object_or_404(
-    #             Ingredient,
-    #             id=ingredient['ingredient'].id
-    #         )
-    #         amount = ingredient['amount']
-    #         if IngredientInRecipe.objects.filter(
-    #                 recipe=recipe,
-    #                 ingredient=ingr_obj
-    #         ).exists():
-    #             amount += F('amount')
-    #         IngredientInRecipe.objects.update_or_create(
-    #             defaults={'amount': amount},
-    #             recipe=recipe,
-    #             ingredient=ingr_obj,
-    #         )
-
-    # @transaction.atomic
-    # def create(self, validated_data):
-    #     tags = validated_data.pop('tags')
-    #     ingredients = validated_data.pop('ingredients')
-    #     author = self.context.get('request').user
-    #     recipe = Recipe.objects.create(author=author, **validated_data)
-    #     recipe.tags.set(tags)
-    #     self.create_ingredients(recipe, ingredients)
-    #     return recipe
-
-    # @transaction.atomic
-    # def update(self, instance, validated_data):
-    #     if 'tags' in self.initial_data:
-    #         tags = validated_data.pop('tags')
-    #         instance.tags.set(tags)
-    #     if 'ingredients' in self.initial_data:
-    #         ingredients = validated_data.pop('ingredients')
-    #         instance.ingredients.clear()
-    #         self.create_ingredients(instance, ingredients)
-    #     instance.name = validated_data.get(
-    #         'name',
-    #         instance.name
-    #     )
-    #     instance.text = validated_data.get(
-    #         'text',
-    #         instance.text
-    #     )
-    #     instance.cooking_time = validated_data.get(
-    #         'cooking_time',
-    #         instance.cooking_time
-    #     )
-    #     instance.image = validated_data.get('image', instance.image)
-    #     instance.save()
-    #     return instance
 
 
 class FavoriteSerializer(serializers.ModelSerializer):

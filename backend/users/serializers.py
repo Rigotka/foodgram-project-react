@@ -1,7 +1,5 @@
-from django.db.models import fields
-from rest_framework import serializers
-
 from recipes.models import Recipe
+from rest_framework import serializers
 
 from .models import Subscription, User
 
@@ -18,7 +16,8 @@ class UserSerializer(serializers.ModelSerializer):
         request = self.context.get('request')
         if request is None or request.user.is_anonymous:
             return False
-        return Subscription.objects.filter(user=request.user, author=obj.id).exists()
+        return Subscription.objects.filter(
+            user=request.user, author=obj.id).exists()
 
 
 class SubscriptionSerializer(serializers.ModelSerializer):
