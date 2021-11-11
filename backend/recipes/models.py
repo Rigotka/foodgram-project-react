@@ -33,7 +33,8 @@ class Tag(models.Model):
         max_length=200,
         blank=False,
         null=True,
-        unique=True
+        unique=True,
+        verbose_name='Тег'
     )
     color = models.CharField(
         max_length=200,
@@ -93,8 +94,7 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        through='TagsRecipe',
-        verbose_name='Тег'
+        through='TagsRecipe'
     )
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(
