@@ -93,7 +93,8 @@ class Recipe(models.Model):
     )
     tags = models.ManyToManyField(
         Tag,
-        through='TagsRecipe'
+        through='TagsRecipe',
+        verbose_name='Тег'
     )
     cooking_time = models.PositiveSmallIntegerField(
         validators=[MinValueValidator(
@@ -177,12 +178,14 @@ class ShoppingCart(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="user_shopping_cart"
+        related_name="user_shopping_cart",
+        verbose_name='Пользователь'
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="recipe_shopping_cart"
+        related_name="recipe_shopping_cart",
+        verbose_name='рецепт в корзине'
     )
     date = models.DateTimeField(auto_now_add=True)
 
