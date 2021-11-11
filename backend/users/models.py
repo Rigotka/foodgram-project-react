@@ -20,12 +20,14 @@ class Subscription(models.Model):
         User,
         on_delete=models.CASCADE,
         blank=False,
-        related_name='follower'
+        related_name='follower',
+        verbose_name='подписчик'
     )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name='following'
+        related_name='following',
+        verbose_name='автор'
     )
 
     class Meta:
