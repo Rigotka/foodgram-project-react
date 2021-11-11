@@ -86,13 +86,13 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
 
     def create_bulk_ingredients(self, recipe, ingredients_data):
         print(ingredients_data)
-        IngredientInRecipe.objects.bulk_create([
-            IngredientInRecipe(
-                ingredient=ingredient['ingredient'],
-                recipe=recipe,
-                amount=ingredient['amount']
-            ) for ingredient in ingredients_data
-        ])
+        # IngredientInRecipe.objects.bulk_create([
+        #     IngredientInRecipe(
+        #         ingredient=ingredient['ingredient'],
+        #         recipe=recipe,
+        #         amount=ingredient['amount']
+        #     ) for ingredient in ingredients_data
+        # ])
 
     @transaction.atomic
     def create(self, validated_data):
