@@ -86,12 +86,12 @@ class FavoriteAndShoppingCartViewSet(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class FavoriteViewSet(APIView):
+class FavoriteViewSet(FavoriteAndShoppingCartViewSet):
     serializer_class = FavoriteSerializer
     obj = Favorite
 
 
-class ShoppingCartViewSet(APIView):
+class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
     serializer_class = ShoppingCartSerializer
     obj = ShoppingCart
 
