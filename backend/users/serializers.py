@@ -39,7 +39,7 @@ class ShowSubscriptionSerializer(serializers.ModelSerializer):
             'email', 'id', 'username', 'first_name', 'last_name',
             'is_subscribed', 'recipes', 'recipes_count'
         )
-        read_only_fields = fields
+        #read_only_fields = fields
 
     def get_is_subscribed(self, obj):
         request = self.context.get('request')
