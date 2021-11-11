@@ -61,9 +61,13 @@ class Ingredient(models.Model):
         max_length=200,
         blank=False,
         null=True,
-        unique=True
+        unique=True,
+        verbose_name='Название',
     )
-    measurement_unit = models.CharField(max_length=50)
+    measurement_unit = models.CharField(
+        max_length=50,
+        verbose_name='Ед. измерения',
+    )
 
     class Meta:
         ordering = ('name', )
@@ -148,12 +152,14 @@ class Favorite(models.Model):
     user = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
-        related_name="user_favorite"
+        related_name="user_favorite",
+        verbose_name='Пользователь',
     )
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
-        related_name="recipe_favorite"
+        related_name="recipe_favorite"б
+        verbose_name='Избранный рецепт',
     )
     date = models.DateTimeField(auto_now_add=True)
 
