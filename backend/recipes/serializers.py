@@ -119,6 +119,15 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
         instance.tags.set(tags_data)
         return instance
 
+    def to_representation(self, instance):
+        data = ShowRecipeSerializer(
+            instance,
+            context={
+                'request': self.context.get('request')
+            }
+        ).data
+        return data
+
 
     # def validate_ingredients(self, value):
     #     ingredients = self.initial_data.get('ingredients')
