@@ -84,39 +84,39 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'ingredients', 'name', 'tags',
                   'cooking_time', 'text', 'image', 'author',)
 
-    def validate_ingredients(self, value):
-        ingredients = self.initial_data.get('ingredients')
-        if not ingredients:
-            raise serializers.ValidationError({'ingredients': 'Список ингредиентов пуст'})
-        ingredients = value['ingredients']
-        for ingredient in ingredients:
-            if ingredient['amount'] <= 0:
-                raise serializers.ValidationError(
-                    {'ingredients': 'Rоличество ингридиента должно быть больше 0'})
-        return value
+    # def validate_ingredients(self, value):
+    #     ingredients = self.initial_data.get('ingredients')
+    #     if not ingredients:
+    #         raise serializers.ValidationError({'ingredients': 'Список ингредиентов пуст'})
+    #     ingredients = value['ingredients']
+    #     for ingredient in ingredients:
+    #         if ingredient['amount'] <= 0:
+    #             raise serializers.ValidationError(
+    #                 {'ingredients': 'Rоличество ингридиента должно быть больше 0'})
+    #     return value
 
-    def validate_cooking_time(self, value):
-        cooking_time = self.initial_data.get('cooking_time')
-        if int(cooking_time) < 1:
-            raise serializers.ValidationError({'cooking_time': 'Время приготовления должно быть больше 0'})
+    # def validate_cooking_time(self, value):
+    #     cooking_time = self.initial_data.get('cooking_time')
+    #     if int(cooking_time) < 1:
+    #         raise serializers.ValidationError({'cooking_time': 'Время приготовления должно быть больше 0'})
 
-    def create_ingredients(self, recipe, ingredients):
-        for ingredient in ingredients:
-            ingr_obj = get_object_or_404(
-                Ingredient,
-                id=ingredient['ingredient'].id
-            )
-            amount = ingredient['amount']
-            if IngredientInRecipe.objects.filter(
-                    recipe=recipe,
-                    ingredient=ingr_obj
-            ).exists():
-                amount += F('amount')
-            IngredientInRecipe.objects.update_or_create(
-                defaults={'amount': amount},
-                recipe=recipe,
-                ingredient=ingr_obj,
-            )
+    # def create_ingredients(self, recipe, ingredients):
+    #     for ingredient in ingredients:
+    #         ingr_obj = get_object_or_404(
+    #             Ingredient,
+    #             id=ingredient['ingredient'].id
+    #         )
+    #         amount = ingredient['amount']
+    #         if IngredientInRecipe.objects.filter(
+    #                 recipe=recipe,
+    #                 ingredient=ingr_obj
+    #         ).exists():
+    #             amount += F('amount')
+    #         IngredientInRecipe.objects.update_or_create(
+    #             defaults={'amount': amount},
+    #             recipe=recipe,
+    #             ingredient=ingr_obj,
+    #         )
 
     @transaction.atomic
     def create(self, validated_data):
