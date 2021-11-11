@@ -6,7 +6,7 @@ from users.models import User
 
 
 class RecipeQueryset(models.QuerySet):
-    
+
     def annotate_user_flags(self, user):
         if user.is_anonymous:
             return self.annotate(is_favorited=Value(
