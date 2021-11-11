@@ -14,7 +14,7 @@ from recipes.permissions import IsAuthorOrReadOnly
 from .permissions import IsOwnerOrReadOnly
 from .models import Subscription, User
 from .paginator import VariablePageSizePaginator
-from .serializers import SubscriptionSerializer, UserSerializer
+from .serializers import SubscriptionSerializer, UserSerializer, ListSubscriptionSerializer
 
 
 class CustomUserViewSet(UserViewSet):
@@ -53,52 +53,10 @@ class CustomUserViewSet(UserViewSet):
         user = request.user
         queryset = Subscription.objects.filter(user=user)
         pages = self.paginate_queryset(queryset)
-        serializer = SubscriptionSerializer(
+        serializer = ListSubscriptionSerializer(
             pages,
             many=True,
             context={'request': request}
         )
         return self.get_paginated_response(serializer.data)
 
-# class SubscribeViewSet(APIView):
-#     def get(self, request, author_id):
-#         user = request.user
-#         data = {
-#             'user': user.id,
-#             'author': author_id
-#         }
-#         serializer = SubscriptionSerializer(
-#             data=data,
-#             context={'request': request}
-#         )
-#         if not serializer.is_valid():
-#             return Response(
-#                 serializer.errors,
-#                 status=status.HTTP_400_BAD_REQUEST
-#             )
-#         serializer.save()
-#         return Response(
-#             serializer.data,
-#             status=status.HTTP_201_CREATED
-#         )
-
-#     def delete(self, request, author_id):
-#         user = request.user
-#         author = get_object_or_404(User, id=author_id)
-#         get_object_or_404(Subscription, user=user, author=author).delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# class ListSubscribeViewSet(generics.ListAPIView):
-#     queryset = User.objects.all()
-#     permission_classes = [IsAuthenticated, ]
-#     serializer_class = ShowSubscriptionSerializer
-
-#     def get_serializer_context(self):
-#         context = super().get_serializer_context()
-#         context.update({'request': self.request})
-#         return context
-
-#     def get_queryset(self):
-#         user = self.request.user
-#         return User.objects.filter(following__user=user)
