@@ -60,15 +60,14 @@ class RecipesViewSet(viewsets.ModelViewSet):
         return context
 
 
-class FavoriteViewSet(APIView):
-
+class FavoriteAndShoppingCartViewSet(APIView):
     def get(self, request, recipe_id):
         user = request.user
         data = {
             'user': user.id,
             'recipe': recipe_id,
         }
-        serializer = FavoriteSerializer(
+        serializer = self.serializer_class(
             data=data,
             context={'request': request}
         )
@@ -83,69 +82,18 @@ class FavoriteViewSet(APIView):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
 
-        Favorite.objects.get(user=user, recipe=recipe).delete()
+        self.obj.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class FavoriteViewSet(APIView):
+    serializer_class = FavoriteSerializer
+    obj = Favorite
 
 
 class ShoppingCartViewSet(APIView):
-
-    def get(self, request, recipe_id):
-        user = request.user
-        data = {
-            'user': user.id,
-            'recipe': recipe_id,
-        }
-
-        serializer = ShoppingCartSerializer(
-            data=data,
-            context={'request': request}
-        )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        return Response(
-            serializer.data,
-            status=status.HTTP_201_CREATED
-        )
-
-    def delete(self, request, recipe_id):
-        user = request.user
-        recipe = get_object_or_404(Recipe, id=recipe_id)
-
-        ShoppingCart.objects.get(user=user, recipe=recipe).delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-
-# class FavoriteAndShoppingCartViewSet(APIView):
-#     permission_classes = [IsAuthorOrReadOnly]
-#     main_obj = Recipe
-
-#     def get(self, request, recipe_id):
-#         user = request.user
-#         data = {
-#             'author': user.id,
-#             'recipes': recipe_id
-#         }
-#         serializer = self.serializer_class(
-#             data=data, context={'request': request}
-#         )
-#         serializer.is_valid(raise_exception=True)
-#         serializer.save()
-#         return Response(
-#             serializer.data,
-#             status=status.HTTP_201_CREATED)
-
-#     def delete(self, request, recipe_id):
-#         user = request.user
-#         deletion_obj = get_object_or_404(
-#             self.second_obj, author=user, recipes_id=recipe_id
-#         )
-#         deletion_obj.delete()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-# class FavoriteViewSet(FavoriteAndShoppingCartViewSet):
-#     second_obj = Favorite
-#     serializer_class = FavoriteSerializer
-
+    serializer_class = ShoppingCartSerializer
+    obj = ShoppingCart
 
 
 
