@@ -55,7 +55,7 @@ WSGI_APPLICATION = 'foodgram_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': os.environ.get('DB_ENGINE'),
         'NAME': 'postgres',
         'USER': 'postgres',
         'PASSWORD': 'postgres1580',
