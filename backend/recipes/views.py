@@ -65,28 +65,53 @@ class FavoriteViewSet(APIView):
     def get(self, request, recipe_id):
         user = request.user
         data = {
-            "user": user.id,
-            "recipe": recipe_id,
+            'user': user.id,
+            'recipe': recipe_id,
         }
-        if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists():
-            return Response(
-                {"Ошибка": "Уже в избранном"},
-                status=status.HTTP_400_BAD_REQUEST
-            )
         serializer = FavoriteSerializer(
             data=data,
-            context={"request": request}
+            context={'request': request}
         )
         serializer.is_valid(raise_exception=True)
         serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
 
     def delete(self, request, recipe_id):
         user = request.user
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        if not Favorite.objects.filter(user=user, recipe=recipe).exists():
-            return Response(status=status.HTTP_400_BAD_REQUEST)
+
         Favorite.objects.get(user=user, recipe=recipe).delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class ShoppingCartViewSet(APIView):
+
+    def get(self, request, recipe_id):
+        user = request.user
+        data = {
+            'user': user.id,
+            'recipe': recipe_id,
+        }
+
+        serializer = ShoppingCartSerializer(
+            data=data,
+            context={'request': request}
+        )
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(
+            serializer.data,
+            status=status.HTTP_201_CREATED
+        )
+
+    def delete(self, request, recipe_id):
+        user = request.user
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+
+        ShoppingCart.objects.get(user=user, recipe=recipe).delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 # class FavoriteAndShoppingCartViewSet(APIView):
@@ -122,10 +147,6 @@ class FavoriteViewSet(APIView):
 #     serializer_class = FavoriteSerializer
 
 
-class ShoppingCartViewSet(APIView):
-    pass
-#     second_obj = ShoppingCart
-#     serializer_class = ShoppingCartSerializer
 
 
 @api_view(['GET'])
