@@ -85,6 +85,7 @@ class RecordRecipeSerializer(serializers.ModelSerializer):
                   'cooking_time', 'text', 'image', 'author',)
 
     def create_bulk_ingredients(self, recipe, ingredients_data):
+        print(ingredients_data)
         IngredientInRecipe.objects.bulk_create([
             IngredientInRecipe(
                 ingredient=ingredient['ingredient'],
