@@ -71,7 +71,11 @@ class FavoriteAndShoppingCartViewSet(APIView):
             data=data,
             context={'request': request}
         )
-        serializer.is_valid(raise_exception=True)
+        if not serializer.is_valid():
+            return Response(
+                serializer.errors,
+                status=status.HTTP_400_BAD_REQUEST
+            )
         serializer.save()
         return Response(
             serializer.data,
