@@ -5,11 +5,12 @@ from .models import (Favorite, Ingredient, IngredientInRecipe, Recipe,
 
 
 class TagAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'slug')
+    list_display = ('name', 'slug')
 
 
 class IngredientAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'name', 'measurement_unit')
+    list_display = ('name', 'measurement_unit')
+    list_filter = ('name',)
 
 
 class TabularInlineIngredient(admin.TabularInline):
@@ -25,7 +26,7 @@ class RecipeAdmin(admin.ModelAdmin):
     list_filter = ('author', 'name', 'tags')
     exclude = ('ingredients',)
     inlines = [TabularInlineIngredient, TabularInlineTag]
-    
+
     def favorited(self, obj):
         favorited_count = Favorite.objects.filter(recipe=obj).count()
         return favorited_count
