@@ -174,7 +174,7 @@ class FavoriteSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Favorite
-        fields = ('user', 'recipe')
+        fields = "__all__"
 
     def to_representation(self, instance):
         request = self.context.get('request')
