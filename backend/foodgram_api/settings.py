@@ -35,6 +35,7 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'foodgram_api.urls'
 
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
