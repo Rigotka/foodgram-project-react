@@ -109,7 +109,7 @@ def download_shopping_cart(request):
         ingredients = IngredientInRecipe.objects.filter(recipe=recipe)
         for ingredient in ingredients:
             amount = ingredient.amount
-            name = ingredient.name
+            name = ingredient.ingredient.name
             measurement_unit = ingredient.ingredient.measurement_unit
             if name not in list:
                 list[name] = {
