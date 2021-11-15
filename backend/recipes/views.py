@@ -122,7 +122,7 @@ def download_shopping_cart(request):
     file_data = []
     for item in list:
         file_data.append(f'{item} - {list[item]["amount"]} '
-                         f'{list[item]["measurement_unit"]} \n')
+                         f'{list[item]["measurement_unit"]} \r\n')
 
     response = HttpResponse(file_data, 'Content-Type: text/plain')
     response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
