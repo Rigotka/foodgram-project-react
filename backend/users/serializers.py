@@ -156,3 +156,4 @@ class ListSubscriptionSerializer(serializers.ModelSerializer):
 #         return ShowSubscriptionSerializer(
 #             instance.author,
 #             context=context).data
+#
