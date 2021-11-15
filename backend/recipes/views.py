@@ -9,7 +9,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .filters import IngredientFilter, RecipeFilter
-from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag
+from .models import Favorite, Ingredient, Recipe, ShoppingCart, Tag, IngredientInRecipe
 from .serializers import (FavoriteSerializer, IngredientSerializer,
                           RecordRecipeSerializer, ShoppingCartSerializer,
                           ShowRecipeSerializer, TagSerializer)
@@ -100,17 +100,29 @@ class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
 
 @api_view(['GET'])
 def download_shopping_cart(request):
+    user = request.user
+    shoppingcart = user.shoping_cart.all()
+    list = []
 
-    recipes = Recipe.objects.filter(recipe_shopping_cart__user=request.user)
-    ingredients = recipes.values(
-        'ingredients__name', 'ingredients__measurement_unit'
-    ).annotate(
-        total_amount=Sum('recipe_ingredients__amount')
-    )
+    for item in shoppingcart:
+        recipe = item.recipe
+        ingredients = IngredientInRecipe.objects(recipe=recipe)
+        for ingredient in ingredients:
+            amount = ingredient.amount
+            name = ingredient.name
+            measurement_unit = ingredient.ingredient.measurement_unit
+            if name not in list:
+                list[name] = {
+                    'measurement_unit': measurement_unit,
+                    'amount': amount
+                }
+            else:
+                list[name]['amout'] += amount
+
     file_data = []
-
-    for item in ingredients:
-        file_data.append('\n'.join(str(value) for value in item.values()))
+    for item in list:
+        file_data.append(f'{item} - {list[item]["amount"]} '
+                         f'{list[item]["measurement_unit"]} \n')
 
     response = HttpResponse(file_data, 'Content-Type: text/plain')
     response['Content-Disposition'] = 'attachment; filename="wishlist.txt"'
