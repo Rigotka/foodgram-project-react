@@ -106,7 +106,7 @@ def download_shopping_cart(request):
 
     for item in shoppingcart:
         recipe = item.recipe
-        ingredients = IngredientInRecipe.objects(recipe=recipe)
+        ingredients = IngredientInRecipe.objects.filter(recipe=recipe)
         for ingredient in ingredients:
             amount = ingredient.amount
             name = ingredient.name
