@@ -117,7 +117,7 @@ def download_shopping_cart(request):
                     'amount': amount
                 }
             else:
-                list[name]['amout'] += amount
+                list[name]['amout'] = (list[name]['amout'] + amount)
 
     file_data = []
     for item in list:
