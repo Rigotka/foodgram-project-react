@@ -2,7 +2,7 @@ import os
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-SECRET_KEY = os.environ.get('SECRET_KEY'),
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 DEBUG = True
 
@@ -58,12 +58,31 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'postgres',
         'USER': 'postgres',
-        'PASSWORD': 'postgres1580',
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
         'HOST': 'db',
         'PORT': '5432',
     }
 }
 
+# DATABASES = { 
+
+#     'default': { 
+
+#         'ENGINE': os.environ.get('DB_ENGINE'), 
+
+#         'NAME': os.environ.get('DB_NAME'), 
+
+#         'USER': os.environ.get('POSTGRES_USER'), 
+
+#         'PASSWORD': os.environ.get('POSTGRES_PASSWORD'), 
+
+#         'HOST': os.environ.get('DB_HOST'), 
+
+#         'PORT': os.environ.get('DB_PORT'), 
+
+#     } 
+
+# } 
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
