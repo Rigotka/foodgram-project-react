@@ -54,16 +54,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'foodgram_api.wsgi.application'
 
-DATABASES = { 
-    'default': { 
-        'ENGINE': 'django.db.backends.postgresql', 
-        'NAME': 'postgres', 
-        'USER': 'postgres', 
-        'PASSWORD': 'postgres1580', 
-        'HOST': 'db', 
-        'PORT': '5432', 
-    } 
-} 
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'postgres1580',
+        'HOST': 'db',
+        'PORT': '5432',
+    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {
