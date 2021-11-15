@@ -101,7 +101,7 @@ class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
 @api_view(['GET'])
 def download_shopping_cart(request):
     user = request.user
-    shoppingcart = user.shoping_cart.all()
+    shoppingcart = user.user_shopping_cart.all()
     list = []
 
     for item in shoppingcart:
