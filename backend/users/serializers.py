@@ -33,15 +33,15 @@ class SubscriptionSerializer(serializers.ModelSerializer):
     def validate(self, data):
         request = self.context.get('request')
         author_id = data['author'].id
-        follow_exists = Subscription.objects.filter(
-            user=request.user,
-            author__id=author_id
-        ).exists()
         if request.method == 'GET':
             if request.user.id == author_id:
                 raise serializers.ValidationError(
                     'Нельзя подписаться на себя'
                 )
+            follow_exists = Subscription.objects.filter(
+                user=request.user,
+                author__id=author_id
+            ).exists()
             if follow_exists:
                 raise serializers.ValidationError(
                     'Вы уже подписаны на этого пользователя'
