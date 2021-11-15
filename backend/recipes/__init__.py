@@ -1,1 +1,1 @@
-default_app_config = "users.apps.RecipesConfig"
+default_app_config = "recipes.apps.RecipesConfig"
