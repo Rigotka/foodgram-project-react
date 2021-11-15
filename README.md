@@ -1,5 +1,4 @@
 # Foodgram
-http://84.201.160.204//signin
 
 ### Установка  
 1. Клонироать репозиторий 
@@ -19,7 +18,6 @@ SECRET_KEY=
 6. На сервере выполнить команду docker-compose up --build
 7. Сделать миграции:
 ```
-sudo docker-compose exec -T bacend python manage.py makemigrations
 sudo docker-compose exec -T bacend python manage.py migrate
 ```
 Ссылка на поект:  http://51.250.20.102/
