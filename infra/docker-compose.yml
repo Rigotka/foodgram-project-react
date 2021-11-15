@@ -21,10 +21,7 @@ services:
       - ./frontend/:/app/result_build/
 
   backend:
-    #image: rigotka/foodgram:latest
-    build:
-      context: ../backend
-      dockerfile: Dockerfile
+    image: rigotka/foodgram:latest
     restart: always
     volumes:
       - static_value:/code/static/
