@@ -56,13 +56,14 @@ WSGI_APPLICATION = 'foodgram_api.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DB_NAME', default='postgres'),
-        'USER': os.environ.get('POSTGRES_USER', default='postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', default='postgres151'),
-        'HOST': os.environ.get('DB_HOST', default='db'),
-        'PORT': os.environ.get('DB_PORT', default='5432'),
+        'NAME': os.environ.get('DB_NAME'),
+        'USER': os.environ.get('POSTGRES_USER',),
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'),
+        'HOST': os.environ.get('DB_HOST'),
+        'PORT': os.environ.get('DB_PORT'),
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
