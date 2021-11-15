@@ -102,7 +102,7 @@ class ShoppingCartViewSet(FavoriteAndShoppingCartViewSet):
 def download_shopping_cart(request):
     user = request.user
     shoppingcart = user.user_shopping_cart.all()
-    list = []
+    list = {}
 
     for item in shoppingcart:
         recipe = item.recipe
