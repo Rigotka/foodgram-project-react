@@ -37,7 +37,7 @@ jobs:
         uses: docker/login-action@v1 
         with:
           username: rigotka
-          password: Falter_sidgun_1580
+          password: 9
       - name: Push to Docker Hub
         uses: docker/build-push-action@v2 
         with:
